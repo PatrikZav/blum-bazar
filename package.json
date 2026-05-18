@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Marsiso/blum-next-app-template.git"
   },
   "license": "MIT",
-  "author": "Marek Olšák",
+  "author": "Patrik Zavadil",
   "type": "module",
   "main": "index.js",
   "scripts": {
