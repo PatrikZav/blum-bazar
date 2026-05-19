@@ -1,3 +1,4 @@
+/* Stránka pro přídání nového inzerátu */
 import { Button, Card, Checkbox, NumberInput, Select, Stack, Text, Textarea, TextInput, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";

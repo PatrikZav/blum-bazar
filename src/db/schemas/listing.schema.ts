@@ -1,3 +1,4 @@
+/* Definuje tabulky inzerátů v databázi*/
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const listing = sqliteTable("listing", {

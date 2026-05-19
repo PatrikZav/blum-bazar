@@ -1,3 +1,4 @@
+/* Stránka detailu jednoho inzerátu */
 import { Badge, Button, Card, Divider, Group, Select, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";

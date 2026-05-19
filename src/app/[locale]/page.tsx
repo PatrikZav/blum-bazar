@@ -1,3 +1,4 @@
+/* Domovská stránka */
 import { Button, Card, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";

@@ -1,3 +1,4 @@
+/* Vytvořil jsem ukázkové inzeráty */
 import { db } from "./index";
 import { listing } from "./schemas";
 

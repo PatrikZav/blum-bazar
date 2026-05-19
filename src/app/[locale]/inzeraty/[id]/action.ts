@@ -1,3 +1,4 @@
+/* Změní stav inzerátu a uloží do databáze*/
 "use server";
 
 import { eq } from "drizzle-orm";

@@ -1,3 +1,4 @@
+/*Uloží inzeráty do databáze*/
 "use server";
 
 import { redirect } from "next/navigation";
