@@ -22,6 +22,18 @@
       "category": "Kategorie",
       "contact": "Kontakt",
       "detail": "Zobrazit detail"
+    },
+    "createListing": {
+      "title": "Nový inzerát",
+      "description": "Vyplňte údaje o věci kterou nabízíte",
+      "fieldTitle": "Název věci",
+      "fieldDescription": "Popis",
+      "fieldPrice": "Cena (Kč)",
+      "fieldIsFree": "Nabízím zdarma",
+      "fieldCategory": "Kategorie",
+      "fieldContact": "Váš kontakt (e-mail)",
+      "submit": "Přidat inzerát",
+      "back": "← Zpět na přehled"
     }
   }
 }
