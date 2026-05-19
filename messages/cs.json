@@ -10,8 +10,11 @@
   },
   "page": {
     "home": {
-      "title": "Domovská stránka",
-      "description": "Vítejte na naší domovské stránce!"
+      "title": "Blogic Bazar",
+      "description": "Interní bazar pro kolegy z Blogic. Nabídni věci které nepotřebuješ, nebo najdi co hledáš.",
+      "browse": "Procházet všechny inzeráty",
+      "addListing": "Přidat inzerát",
+      "categoriesTitle": "Procházet podle kategorie"
     },
     "listings": {
       "title": "Bazar",
