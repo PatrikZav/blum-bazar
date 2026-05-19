@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Divider, Group, Select, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
+import { updateStatus } from "./action";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -78,6 +79,26 @@ export default async function Page({ params }: Props) {
               {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
             </Text>
           </Group>
+
+          <Divider />
+
+          <form action={updateStatus}>
+            <input type="hidden" name="id" value={item.id} />
+            <Stack gap="sm">
+              <Text fw={500} size="sm">
+                {t("page.listings.status")}
+              </Text>
+              <Group align="flex-end">
+                <Select
+                  name="status"
+                  defaultValue={item.status}
+                  data={["Dostupné", "Rezervováno", "Prodáno / předáno"]}
+                  style={{ flex: 1 }}
+                />
+                <Button type="submit">Uložit stav</Button>
+              </Group>
+            </Stack>
+          </form>
         </Stack>
       </Card>
     </Stack>
