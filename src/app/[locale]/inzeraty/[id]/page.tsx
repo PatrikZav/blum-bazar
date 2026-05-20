@@ -1,14 +1,14 @@
 /* Stránka detailu jednoho inzerátu */
 import { Badge, Button, Card, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { eq } from "drizzle-orm";
+import { EditListingModal } from "@/components/listings/EditListingModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
 import { updateListing } from "./action";
-import { EditListingModal } from "@/components/listings/EditListingModal";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -16,7 +16,10 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const result = await db.select().from(listing).where(eq(listing.id, Number(id)));
+  const result = await db
+    .select()
+    .from(listing)
+    .where(eq(listing.id, Number(id)));
   const item = result[0];
   if (!item) return { title: "Inzerát nenalezen" };
   return { title: item.title };
@@ -26,7 +29,10 @@ export default async function Page({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations();
 
-  const result = await db.select().from(listing).where(eq(listing.id, Number(id)));
+  const result = await db
+    .select()
+    .from(listing)
+    .where(eq(listing.id, Number(id)));
   const item = result[0];
 
   if (!item) notFound();
@@ -45,13 +51,7 @@ export default async function Page({ params }: Props) {
             <Title order={2}>{item.title}</Title>
             <Badge
               size="lg"
-              color={
-                item.status === "Dostupné"
-                  ? "green"
-                  : item.status === "Rezervováno"
-                    ? "yellow"
-                    : "gray"
-              }
+              color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
             >
               {item.status}
             </Badge>

@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Checkbox,
-  Group,
-  Modal,
-  NumberInput,
-  Select,
-  Stack,
-  TextInput,
-  Textarea,
-} from "@mantine/core";
+import { Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRef } from "react";
 import type { Listing } from "@/db/schemas";
@@ -39,34 +29,16 @@ export function EditListingModal({ listing, updateListing }: Props) {
         <form ref={formRef} action={handleSubmit}>
           <input type="hidden" name="id" value={listing.id} />
           <Stack gap="md">
-            <TextInput
-              name="title"
-              label="Název věci"
-              defaultValue={listing.title}
-              required
-            />
+            <TextInput name="title" label="Název věci" defaultValue={listing.title} required />
 
-            <Textarea
-              name="description"
-              label="Popis"
-              defaultValue={listing.description}
-              rows={4}
-              required
-            />
+            <Textarea name="description" label="Popis" defaultValue={listing.description} rows={4} required />
 
             <Select
               name="category"
               label="Kategorie"
               defaultValue={listing.category}
               required
-              data={[
-                "Nábytek",
-                "Dětské věci",
-                "Oblečení",
-                "Elektronika",
-                "Knihy",
-                "Ostatní",
-              ]}
+              data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
             />
 
             <Select
@@ -77,25 +49,11 @@ export function EditListingModal({ listing, updateListing }: Props) {
               data={["Dostupné", "Rezervováno", "Prodáno / předáno"]}
             />
 
-            <NumberInput
-              name="price"
-              label="Cena (Kč)"
-              defaultValue={listing.price ?? undefined}
-              min={0}
-            />
+            <NumberInput name="price" label="Cena (Kč)" defaultValue={listing.price ?? undefined} min={0} />
 
-            <Checkbox
-              name="isFree"
-              label="Nabízím zdarma"
-              defaultChecked={listing.isFree}
-            />
+            <Checkbox name="isFree" label="Nabízím zdarma" defaultChecked={listing.isFree} />
 
-            <TextInput
-              name="contact"
-              label="Kontakt (e-mail)"
-              defaultValue={listing.contact}
-              required
-            />
+            <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>
