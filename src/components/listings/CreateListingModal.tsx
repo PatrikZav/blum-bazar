@@ -31,26 +31,26 @@ export function CreateListingModal({ createListing }: Props) {
       </Button>
 
       <Modal
-          opened={opened}
-          onClose={close}
-          title="Nový inzerát"
-          size="lg"
-          overlayProps={{
-            backgroundOpacity: 0.35,
-            blur: 8,
-          }}
-          styles={{
-            content: {
-              background: "rgba(255, 255, 255, 0.8)",
-              backdropFilter: "blur(24px) saturate(180%)",
-              WebkitBackdropFilter: "blur(24px) saturate(180%)",
-              border: "1px solid rgba(255, 255, 255, 0.5)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
-            },
-            header: {
-              background: "transparent",
-            },
-          }}
+        opened={opened}
+        onClose={close}
+        title="Nový inzerát"
+        size="lg"
+        overlayProps={{
+          backgroundOpacity: 0.35,
+          blur: 8,
+        }}
+        styles={{
+          content: {
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(24px) saturate(180%)",
+            WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            border: "1px solid rgba(255, 255, 255, 0.5)",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+          },
+          header: {
+            background: "transparent",
+          },
+        }}
       >
         <form action={handleSubmit}>
           <Stack gap="md">
