@@ -2,33 +2,38 @@
 
 import { Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useRef } from "react";
-import type { Listing } from "@/db/schemas";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 interface Props {
-  listing: Listing;
-  updateListing: (formData: FormData) => Promise<void>;
+  createListing: (formData: FormData) => Promise<void>;
 }
 
-export function EditListingModal({ listing, updateListing }: Props) {
+export function CreateListingModal({ createListing }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("novy") === "1") {
+      open();
+    }
+  }, [searchParams, open]);
 
   async function handleSubmit(formData: FormData) {
-    await updateListing(formData);
+    await createListing(formData);
     close();
   }
 
   return (
     <>
-      <Button variant="light" onClick={open}>
-        Upravit inzerát
+      <Button size="md" onClick={open}>
+        Přidat inzerát
       </Button>
 
       <Modal
           opened={opened}
           onClose={close}
-          title="Upravit inzerát"
+          title="Nový inzerát"
           size="lg"
           overlayProps={{
             backgroundOpacity: 0.35,
@@ -47,40 +52,37 @@ export function EditListingModal({ listing, updateListing }: Props) {
             },
           }}
       >
-        <form ref={formRef} action={handleSubmit}>
-          <input type="hidden" name="id" value={listing.id} />
+        <form action={handleSubmit}>
           <Stack gap="md">
-            <TextInput name="title" label="Název věci" defaultValue={listing.title} required />
+            <TextInput name="title" label="Název věci" placeholder="např. Dětská židle" required />
 
-            <Textarea name="description" label="Popis" defaultValue={listing.description} rows={4} required />
+            <Textarea
+              name="description"
+              label="Popis"
+              placeholder="Popište stav věci, rozměry, důvod prodeje..."
+              rows={4}
+              required
+            />
 
             <Select
               name="category"
               label="Kategorie"
-              defaultValue={listing.category}
+              placeholder="Vyberte kategorii"
               required
               data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
             />
 
-            <Select
-              name="status"
-              label="Stav"
-              defaultValue={listing.status}
-              required
-              data={["Dostupné", "Rezervováno", "Prodáno / předáno"]}
-            />
+            <NumberInput name="price" label="Cena (Kč)" placeholder="např. 500" min={0} />
 
-            <NumberInput name="price" label="Cena (Kč)" defaultValue={listing.price ?? undefined} min={0} />
+            <Checkbox name="isFree" label="Nabízím zdarma" />
 
-            <Checkbox name="isFree" label="Nabízím zdarma" defaultChecked={listing.isFree} />
-
-            <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
+            <TextInput name="contact" label="Kontakt (e-mail)" placeholder="jmeno@blogic.cz" required />
 
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>
                 Zrušit
               </Button>
-              <Button type="submit">Uložit změny</Button>
+              <Button type="submit">Přidat inzerát</Button>
             </Group>
           </Stack>
         </form>

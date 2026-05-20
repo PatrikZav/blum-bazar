@@ -39,7 +39,7 @@ export default async function Page() {
           <Link href="/cs/inzeraty">
             <Button size="md">{t("page.home.browse")}</Button>
           </Link>
-          <Link href="/cs/inzeraty/novy">
+          <Link href="/cs/inzeraty?novy=1">
             <Button size="md" variant="light">
               {t("page.home.addListing")}
             </Button>

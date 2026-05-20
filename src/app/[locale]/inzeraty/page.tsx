@@ -4,8 +4,10 @@ import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { CreateListingModal } from "@/components/listings/CreateListingModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
+import { createListing } from "./novy/action";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
@@ -37,9 +39,7 @@ export default async function Page({ searchParams }: Props) {
           <Title>{t("page.listings.title")}</Title>
           <Text c="dimmed">{t("page.listings.description")}</Text>
         </div>
-        <Link href="/cs/inzeraty/novy">
-          <Button>{t("page.listings.newListing")}</Button>
-        </Link>
+        <CreateListingModal createListing={createListing} />
       </Group>
 
       <Group gap="xs">
