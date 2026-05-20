@@ -20,7 +20,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       </head>
       <body>
         <NextIntlClientProvider>
-          <MantineProvider>
+          <MantineProvider theme={{ primaryColor: "orange" }}>
             <ModalsProvider>
               <Providers>
                 <PageLayout>{children}</PageLayout>

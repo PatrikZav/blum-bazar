@@ -1,8 +1,10 @@
 /* Domovská stránka */
-import { Button, Card, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+
+import { Button, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { CategoryCard } from "@/components/listings/CategoryCard";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
@@ -13,12 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const CATEGORIES = [
-  { label: "Nábytek", emoji: "🛋️" },
-  { label: "Dětské věci", emoji: "🧸" },
-  { label: "Oblečení", emoji: "👕" },
-  { label: "Elektronika", emoji: "💻" },
-  { label: "Knihy", emoji: "📚" },
-  { label: "Ostatní", emoji: "📦" },
+  { label: "Nábytek", emoji: "🛋️", image: "/categories/nabytek.jpg", color: "#e8d5b7" },
+  { label: "Dětské věci", emoji: "🧸", image: "/categories/detske-veci.jpg", color: "#ffd6e0" },
+  { label: "Oblečení", emoji: "👕", image: "/categories/obleceni.jpg", color: "#c8e6c9" },
+  { label: "Elektronika", emoji: "💻", image: "/categories/elektronika.jpg", color: "#bbdefb" },
+  { label: "Knihy", emoji: "📚", image: "/categories/knihy.jpg", color: "#e1bee7" },
+  { label: "Ostatní", emoji: "📦", image: "/categories/ostatni.jpg", color: "#ffe0b2" },
 ];
 
 export default async function Page() {
@@ -46,25 +48,19 @@ export default async function Page() {
       </Stack>
 
       <Stack gap="md">
-        <Title order={2}>{t("page.home.categoriesTitle")}</Title>
-        <SimpleGrid cols={{ base: 2, sm: 3, lg: 6 }} spacing="md">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1.5rem",
+            maxWidth: "100%",
+            margin: "0 auto",
+          }}
+        >
           {CATEGORIES.map((cat) => (
-            <Link
-              key={cat.label}
-              href={`/cs/inzeraty?kategorie=${encodeURIComponent(cat.label)}`}
-              style={{ textDecoration: "none" }}
-            >
-              <Card shadow="sm" padding="lg" radius="md" withBorder style={{ cursor: "pointer" }}>
-                <Stack align="center" gap="xs">
-                  <Text size="xl">{cat.emoji}</Text>
-                  <Text fw={500} ta="center" size="sm">
-                    {cat.label}
-                  </Text>
-                </Stack>
-              </Card>
-            </Link>
+            <CategoryCard key={cat.label} label={cat.label} emoji={cat.emoji} image={cat.image} color={cat.color} />
           ))}
-        </SimpleGrid>
+        </div>
       </Stack>
     </Stack>
   );
