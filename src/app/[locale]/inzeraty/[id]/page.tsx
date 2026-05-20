@@ -1,13 +1,14 @@
 /* Stránka detailu jednoho inzerátu */
-import { Badge, Button, Card, Divider, Group, Select, Stack, Text, Title } from "@mantine/core";
-import { eq } from "drizzle-orm";
+import { Badge, Button, Card, Divider, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
-import { updateStatus } from "./action";
+import { updateListing } from "./action";
+import { EditListingModal } from "@/components/listings/EditListingModal";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,10 +16,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const result = await db
-    .select()
-    .from(listing)
-    .where(eq(listing.id, Number(id)));
+  const result = await db.select().from(listing).where(eq(listing.id, Number(id)));
   const item = result[0];
   if (!item) return { title: "Inzerát nenalezen" };
   return { title: item.title };
@@ -28,10 +26,7 @@ export default async function Page({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations();
 
-  const result = await db
-    .select()
-    .from(listing)
-    .where(eq(listing.id, Number(id)));
+  const result = await db.select().from(listing).where(eq(listing.id, Number(id)));
   const item = result[0];
 
   if (!item) notFound();
@@ -50,7 +45,13 @@ export default async function Page({ params }: Props) {
             <Title order={2}>{item.title}</Title>
             <Badge
               size="lg"
-              color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
+              color={
+                item.status === "Dostupné"
+                  ? "green"
+                  : item.status === "Rezervováno"
+                    ? "yellow"
+                    : "gray"
+              }
             >
               {item.status}
             </Badge>
@@ -83,23 +84,7 @@ export default async function Page({ params }: Props) {
 
           <Divider />
 
-          <form action={updateStatus}>
-            <input type="hidden" name="id" value={item.id} />
-            <Stack gap="sm">
-              <Text fw={500} size="sm">
-                {t("page.listings.status")}
-              </Text>
-              <Group align="flex-end">
-                <Select
-                  name="status"
-                  defaultValue={item.status}
-                  data={["Dostupné", "Rezervováno", "Prodáno / předáno"]}
-                  style={{ flex: 1 }}
-                />
-                <Button type="submit">Uložit stav</Button>
-              </Group>
-            </Stack>
-          </form>
+          <EditListingModal listing={item} updateListing={updateListing} />
         </Stack>
       </Card>
     </Stack>
