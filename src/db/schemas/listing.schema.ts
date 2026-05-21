@@ -1,4 +1,3 @@
-/* Definuje tabulky inzerátů v databázi*/
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const listing = sqliteTable("listing", {
@@ -10,6 +9,7 @@ export const listing = sqliteTable("listing", {
   category: text().notNull(),
   status: text().notNull().default("Dostupné"),
   contact: text().notNull(),
+  image: text(),
   createdAt: int({ mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

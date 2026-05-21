@@ -78,6 +78,15 @@ export function CreateListingModal({ createListing }: Props) {
 
             <TextInput name="contact" label="Kontakt (e-mail)" placeholder="jmeno@blogic.cz" required />
 
+            <Stack gap={4}>
+              <input name="image" type="file" accept="image/*" id="image-upload" style={{ display: "none" }} />
+              <label htmlFor="image-upload">
+                <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                  📷 Nahrát obrázek
+                </Button>
+              </label>
+            </Stack>
+
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>
                 Zrušit

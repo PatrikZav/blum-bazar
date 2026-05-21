@@ -1,6 +1,8 @@
-/* Změní stav inzerátu a uloží do databáze*/
+/*Změní stav inzerátu a uloží do databáze*/
 "use server";
 
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -30,8 +32,20 @@ export async function updateListing(formData: FormData) {
   const category = formData.get("category") as string;
   const contact = formData.get("contact") as string;
   const status = formData.get("status") as string;
+  const imageFile = formData.get("image") as File | null;
 
   if (!id || !title || !description || !category || !contact || !status) return;
+
+  let imagePath: string | undefined;
+
+  if (imageFile && imageFile.size > 0) {
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filename = `${Date.now()}-${imageFile.name.replace(/\s/g, "-")}`;
+    const path = join(process.cwd(), "public", "uploads", filename);
+    await writeFile(path, buffer);
+    imagePath = `/uploads/${filename}`;
+  }
 
   await db
     .update(listing)
@@ -43,6 +57,7 @@ export async function updateListing(formData: FormData) {
       category,
       contact,
       status,
+      ...(imagePath ? { image: imagePath } : {}),
     })
     .where(eq(listing.id, Number(id)));
 
