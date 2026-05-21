@@ -83,6 +83,15 @@ export function EditListingModal({ listing, updateListing, deleteListing }: Prop
 
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 
+            <Stack gap={4}>
+              <input name="image" type="file" accept="image/*" id="image-upload" style={{ display: "none" }} />
+              <label htmlFor="image-upload">
+                <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                  📷 Nahrát obrázek
+                </Button>
+              </label>
+            </Stack>
+
             <Group justify="space-between">
               <Button color="red" variant="light" onClick={handleDelete}>
                 Smazat inzerát
