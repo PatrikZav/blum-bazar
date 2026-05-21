@@ -74,3 +74,29 @@ export async function deleteListing(formData: FormData) {
 
   redirect("/cs/inzeraty");
 }
+
+export async function removeListingImage(formData: FormData) {
+  const id = formData.get("id") as string;
+
+  if (!id) return;
+
+  const result = await db
+    .select()
+    .from(listing)
+    .where(eq(listing.id, Number(id)));
+  const item = result[0];
+
+  if (item?.image) {
+    const { unlink } = await import("node:fs/promises");
+    const { join } = await import("node:path");
+    const filePath = join(process.cwd(), "public", item.image);
+    await unlink(filePath).catch(() => {});
+  }
+
+  await db
+    .update(listing)
+    .set({ image: null })
+    .where(eq(listing.id, Number(id)));
+
+  revalidatePath(`/cs/inzeraty/${id}`);
+}
