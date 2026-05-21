@@ -8,15 +8,22 @@ import type { Listing } from "@/db/schemas";
 interface Props {
   listing: Listing;
   updateListing: (formData: FormData) => Promise<void>;
+  deleteListing: (formData: FormData) => Promise<void>;
 }
 
-export function EditListingModal({ listing, updateListing }: Props) {
+export function EditListingModal({ listing, updateListing, deleteListing }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
     await updateListing(formData);
     close();
+  }
+
+  async function handleDelete() {
+    const formData = new FormData();
+    formData.append("id", String(listing.id));
+    await deleteListing(formData);
   }
 
   return (
@@ -76,11 +83,16 @@ export function EditListingModal({ listing, updateListing }: Props) {
 
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 
-            <Group justify="flex-end">
-              <Button variant="subtle" onClick={close}>
-                Zrušit
+            <Group justify="space-between">
+              <Button color="red" variant="light" onClick={handleDelete}>
+                Smazat inzerát
               </Button>
-              <Button type="submit">Uložit změny</Button>
+              <Group>
+                <Button variant="subtle" onClick={close}>
+                  Zrušit
+                </Button>
+                <Button type="submit">Uložit změny</Button>
+              </Group>
             </Group>
           </Stack>
         </form>

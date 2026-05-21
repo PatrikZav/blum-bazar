@@ -8,7 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { EditListingModal } from "@/components/listings/EditListingModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
-import { updateListing } from "./action";
+import { deleteListing, updateListing } from "./action";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -84,7 +84,7 @@ export default async function Page({ params }: Props) {
 
           <Divider />
 
-          <EditListingModal listing={item} updateListing={updateListing} />
+          <EditListingModal listing={item} updateListing={updateListing} deleteListing={deleteListing} />
         </Stack>
       </Card>
     </Stack>
