@@ -1,23 +1,27 @@
 "use client";
 
-import { Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Alert, Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { Listing } from "@/db/schemas";
 
 interface Props {
   listing: Listing;
   updateListing: (formData: FormData) => Promise<void>;
   deleteListing: (formData: FormData) => Promise<void>;
+  removeListingImage: (formData: FormData) => Promise<void>;
 }
 
-export function EditListingModal({ listing, updateListing, deleteListing }: Props) {
+export function EditListingModal({ listing, updateListing, deleteListing, removeListingImage }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [imageSelected, setImageSelected] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(formData: FormData) {
     await updateListing(formData);
     close();
+    setImageSelected(false);
   }
 
   async function handleDelete() {
@@ -25,6 +29,24 @@ export function EditListingModal({ listing, updateListing, deleteListing }: Prop
     formData.append("id", String(listing.id));
     await deleteListing(formData);
   }
+
+  async function handleRemoveImage() {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setImageSelected(false);
+    if (listing.image) {
+      const formData = new FormData();
+      formData.append("id", String(listing.id));
+      await removeListingImage(formData);
+    }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setImageSelected(!!e.target.files?.[0]);
+  }
+
+  const hasImage = !!listing.image || imageSelected;
 
   return (
     <>
@@ -84,12 +106,37 @@ export function EditListingModal({ listing, updateListing, deleteListing }: Prop
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 
             <Stack gap={4}>
-              <input name="image" type="file" accept="image/*" id="image-upload" style={{ display: "none" }} />
-              <label htmlFor="image-upload">
-                <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                  📷 Nahrát obrázek
-                </Button>
-              </label>
+              <input
+                ref={fileInputRef}
+                name="image"
+                type="file"
+                accept="image/*"
+                id="image-upload-edit"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <Group gap="xs">
+                <label htmlFor="image-upload-edit" style={{ flex: 1 }}>
+                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                    📷 {listing.image ? "Změnit obrázek" : "Nahrát obrázek"}
+                  </Button>
+                </label>
+                {hasImage && (
+                  <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
+                    🗑️
+                  </Button>
+                )}
+              </Group>
+              {listing.image && !imageSelected && (
+                <Alert color="blue" variant="light">
+                  ✅ Obrázek je nahrán.
+                </Alert>
+              )}
+              {imageSelected && (
+                <Alert color="green" variant="light">
+                  ✅ Nový obrázek byl vybrán a bude nahrán po uložení.
+                </Alert>
+              )}
             </Stack>
 
             <Group justify="space-between">

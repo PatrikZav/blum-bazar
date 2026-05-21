@@ -1,9 +1,9 @@
 "use client";
 
-import { Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Alert, Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   createListing: (formData: FormData) => Promise<void>;
@@ -11,6 +11,8 @@ interface Props {
 
 export function CreateListingModal({ createListing }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [imageSelected, setImageSelected] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -22,6 +24,18 @@ export function CreateListingModal({ createListing }: Props) {
   async function handleSubmit(formData: FormData) {
     await createListing(formData);
     close();
+    setImageSelected(false);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setImageSelected(!!e.target.files?.[0]);
+  }
+
+  function handleRemoveImage() {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setImageSelected(false);
   }
 
   return (
@@ -79,12 +93,32 @@ export function CreateListingModal({ createListing }: Props) {
             <TextInput name="contact" label="Kontakt (e-mail)" placeholder="jmeno@blogic.cz" required />
 
             <Stack gap={4}>
-              <input name="image" type="file" accept="image/*" id="image-upload" style={{ display: "none" }} />
-              <label htmlFor="image-upload">
-                <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                  📷 Nahrát obrázek
-                </Button>
-              </label>
+              <input
+                ref={fileInputRef}
+                name="image"
+                type="file"
+                accept="image/*"
+                id="image-upload-create"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <Group gap="xs">
+                <label htmlFor="image-upload-create" style={{ flex: 1 }}>
+                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                    📷 Nahrát obrázek
+                  </Button>
+                </label>
+                {imageSelected && (
+                  <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
+                    🗑️
+                  </Button>
+                )}
+              </Group>
+              {imageSelected && (
+                <Alert color="green" variant="light">
+                  ✅ Obrázek byl vybrán a bude nahrán po uložení.
+                </Alert>
+              )}
             </Stack>
 
             <Group justify="flex-end">
