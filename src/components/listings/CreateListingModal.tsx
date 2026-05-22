@@ -12,7 +12,9 @@ interface Props {
 export function CreateListingModal({ createListing }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
+  const [qrSelected, setQrSelected] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const qrInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -25,17 +27,25 @@ export function CreateListingModal({ createListing }: Props) {
     await createListing(formData);
     close();
     setImageSelected(false);
+    setQrSelected(false);
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setImageSelected(!!e.target.files?.[0]);
   }
 
+  function handleQrChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQrSelected(!!e.target.files?.[0]);
+  }
+
   function handleRemoveImage() {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setImageSelected(false);
+  }
+
+  function handleRemoveQr() {
+    if (qrInputRef.current) qrInputRef.current.value = "";
+    setQrSelected(false);
   }
 
   return (
@@ -49,10 +59,7 @@ export function CreateListingModal({ createListing }: Props) {
         onClose={close}
         title="Nový inzerát"
         size="lg"
-        overlayProps={{
-          backgroundOpacity: 0.35,
-          blur: 8,
-        }}
+        overlayProps={{ backgroundOpacity: 0.35, blur: 8 }}
         styles={{
           content: {
             background: "rgba(255, 255, 255, 0.8)",
@@ -61,22 +68,14 @@ export function CreateListingModal({ createListing }: Props) {
             border: "1px solid rgba(255, 255, 255, 0.5)",
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
           },
-          header: {
-            background: "transparent",
-          },
+          header: { background: "transparent" },
         }}
       >
         <form action={handleSubmit}>
           <Stack gap="md">
             <TextInput name="title" label="Název věci" placeholder="např. Dětská židle" required />
 
-            <Textarea
-              name="description"
-              label="Popis"
-              placeholder="Popište stav věci, rozměry, důvod prodeje..."
-              rows={4}
-              required
-            />
+            <Textarea name="description" label="Popis" placeholder="Popište stav věci..." rows={4} required />
 
             <Select
               name="category"
@@ -116,10 +115,41 @@ export function CreateListingModal({ createListing }: Props) {
               </Group>
               {imageSelected && (
                 <Alert color="green" variant="light">
-                  ✅ Obrázek byl vybrán a bude nahrán po uložení.
+                  ✅ Obrázek byl vybrán.
                 </Alert>
               )}
             </Stack>
+
+            <Stack gap={4}>
+              <input
+                ref={qrInputRef}
+                name="qrCode"
+                type="file"
+                accept="image/*"
+                id="qr-upload-create"
+                style={{ display: "none" }}
+                onChange={handleQrChange}
+              />
+              <Group gap="xs">
+                <label htmlFor="qr-upload-create" style={{ flex: 1 }}>
+                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                    💳 Nahrát QR kód platby
+                  </Button>
+                </label>
+                {qrSelected && (
+                  <Button color="red" variant="light" onClick={handleRemoveQr} style={{ flexShrink: 0 }}>
+                    🗑️
+                  </Button>
+                )}
+              </Group>
+              {qrSelected && (
+                <Alert color="green" variant="light">
+                  ✅ QR kód byl vybrán.
+                </Alert>
+              )}
+            </Stack>
+
+            <TextInput name="accountNumber" label="Číslo účtu (volitelné)" placeholder="např. 123456789/0800" />
 
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>
