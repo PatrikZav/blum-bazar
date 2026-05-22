@@ -15,11 +15,14 @@ export async function createListing(formData: FormData) {
   const category = formData.get("category") as string;
   const contact = formData.get("contact") as string;
   const imageFile = formData.get("image") as File | null;
+  const qrFile = formData.get("qrCode") as File | null;
+  const accountNumber = formData.get("accountNumber") as string;
 
   if (!title || !description || !category || !contact) return;
   if (!isFree && !price) return;
 
   let imagePath: string | null = null;
+  let qrPath: string | null = null;
 
   if (imageFile && imageFile.size > 0) {
     const bytes = await imageFile.arrayBuffer();
@@ -28,6 +31,15 @@ export async function createListing(formData: FormData) {
     const path = join(process.cwd(), "public", "uploads", filename);
     await writeFile(path, buffer);
     imagePath = `/uploads/${filename}`;
+  }
+
+  if (qrFile && qrFile.size > 0) {
+    const bytes = await qrFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filename = `qr-${Date.now()}-${qrFile.name.replace(/\s/g, "-")}`;
+    const path = join(process.cwd(), "public", "uploads", filename);
+    await writeFile(path, buffer);
+    qrPath = `/uploads/${filename}`;
   }
 
   await db.insert(listing).values({
@@ -39,6 +51,8 @@ export async function createListing(formData: FormData) {
     contact,
     status: "Dostupné",
     image: imagePath,
+    qrCode: qrPath,
+    accountNumber: accountNumber || null,
   });
 
   redirect("/cs/inzeraty");

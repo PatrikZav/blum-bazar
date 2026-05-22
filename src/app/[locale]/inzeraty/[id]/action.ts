@@ -1,7 +1,7 @@
 /*Změní stav inzerátu a uloží do databáze*/
 "use server";
 
-import { writeFile } from "node:fs/promises";
+import { unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -33,10 +33,13 @@ export async function updateListing(formData: FormData) {
   const contact = formData.get("contact") as string;
   const status = formData.get("status") as string;
   const imageFile = formData.get("image") as File | null;
+  const qrFile = formData.get("qrCode") as File | null;
+  const accountNumber = formData.get("accountNumber") as string;
 
   if (!id || !title || !description || !category || !contact || !status) return;
 
   let imagePath: string | undefined;
+  let qrPath: string | undefined;
 
   if (imageFile && imageFile.size > 0) {
     const bytes = await imageFile.arrayBuffer();
@@ -45,6 +48,15 @@ export async function updateListing(formData: FormData) {
     const path = join(process.cwd(), "public", "uploads", filename);
     await writeFile(path, buffer);
     imagePath = `/uploads/${filename}`;
+  }
+
+  if (qrFile && qrFile.size > 0) {
+    const bytes = await qrFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filename = `qr-${Date.now()}-${qrFile.name.replace(/\s/g, "-")}`;
+    const path = join(process.cwd(), "public", "uploads", filename);
+    await writeFile(path, buffer);
+    qrPath = `/uploads/${filename}`;
   }
 
   await db
@@ -57,7 +69,9 @@ export async function updateListing(formData: FormData) {
       category,
       contact,
       status,
+      accountNumber: accountNumber || null,
       ...(imagePath ? { image: imagePath } : {}),
+      ...(qrPath ? { qrCode: qrPath } : {}),
     })
     .where(eq(listing.id, Number(id)));
 
@@ -87,8 +101,6 @@ export async function removeListingImage(formData: FormData) {
   const item = result[0];
 
   if (item?.image) {
-    const { unlink } = await import("node:fs/promises");
-    const { join } = await import("node:path");
     const filePath = join(process.cwd(), "public", item.image);
     await unlink(filePath).catch(() => {});
   }
@@ -96,6 +108,30 @@ export async function removeListingImage(formData: FormData) {
   await db
     .update(listing)
     .set({ image: null })
+    .where(eq(listing.id, Number(id)));
+
+  revalidatePath(`/cs/inzeraty/${id}`);
+}
+
+export async function removeListingQr(formData: FormData) {
+  const id = formData.get("id") as string;
+
+  if (!id) return;
+
+  const result = await db
+    .select()
+    .from(listing)
+    .where(eq(listing.id, Number(id)));
+  const item = result[0];
+
+  if (item?.qrCode) {
+    const filePath = join(process.cwd(), "public", item.qrCode);
+    await unlink(filePath).catch(() => {});
+  }
+
+  await db
+    .update(listing)
+    .set({ qrCode: null, accountNumber: null })
     .where(eq(listing.id, Number(id)));
 
   revalidatePath(`/cs/inzeraty/${id}`);

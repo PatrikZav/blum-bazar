@@ -10,18 +10,28 @@ interface Props {
   updateListing: (formData: FormData) => Promise<void>;
   deleteListing: (formData: FormData) => Promise<void>;
   removeListingImage: (formData: FormData) => Promise<void>;
+  removeListingQr: (formData: FormData) => Promise<void>;
 }
 
-export function EditListingModal({ listing, updateListing, deleteListing, removeListingImage }: Props) {
+export function EditListingModal({
+  listing,
+  updateListing,
+  deleteListing,
+  removeListingImage,
+  removeListingQr,
+}: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
+  const [qrSelected, setQrSelected] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const qrInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(formData: FormData) {
     await updateListing(formData);
     close();
     setImageSelected(false);
+    setQrSelected(false);
   }
 
   async function handleDelete() {
@@ -31,9 +41,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
   }
 
   async function handleRemoveImage() {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setImageSelected(false);
     if (listing.image) {
       const formData = new FormData();
@@ -42,11 +50,15 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setImageSelected(!!e.target.files?.[0]);
+  async function handleRemoveQr() {
+    if (qrInputRef.current) qrInputRef.current.value = "";
+    setQrSelected(false);
+    if (listing.qrCode) {
+      const formData = new FormData();
+      formData.append("id", String(listing.id));
+      await removeListingQr(formData);
+    }
   }
-
-  const hasImage = !!listing.image || imageSelected;
 
   return (
     <>
@@ -59,10 +71,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
         onClose={close}
         title="Upravit inzerát"
         size="lg"
-        overlayProps={{
-          backgroundOpacity: 0.35,
-          blur: 8,
-        }}
+        overlayProps={{ backgroundOpacity: 0.35, blur: 8 }}
         styles={{
           content: {
             background: "rgba(255, 255, 255, 0.8)",
@@ -71,9 +80,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
             border: "1px solid rgba(255, 255, 255, 0.5)",
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
           },
-          header: {
-            background: "transparent",
-          },
+          header: { background: "transparent" },
         }}
       >
         <form ref={formRef} action={handleSubmit}>
@@ -113,7 +120,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
                 accept="image/*"
                 id="image-upload-edit"
                 style={{ display: "none" }}
-                onChange={handleFileChange}
+                onChange={() => setImageSelected(true)}
               />
               <Group gap="xs">
                 <label htmlFor="image-upload-edit" style={{ flex: 1 }}>
@@ -121,7 +128,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
                     📷 {listing.image ? "Změnit obrázek" : "Nahrát obrázek"}
                   </Button>
                 </label>
-                {hasImage && (
+                {(listing.image || imageSelected) && (
                   <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
                     🗑️
                   </Button>
@@ -134,10 +141,51 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
               )}
               {imageSelected && (
                 <Alert color="green" variant="light">
-                  ✅ Nový obrázek byl vybrán a bude nahrán po uložení.
+                  ✅ Nový obrázek byl vybrán.
                 </Alert>
               )}
             </Stack>
+
+            <Stack gap={4}>
+              <input
+                ref={qrInputRef}
+                name="qrCode"
+                type="file"
+                accept="image/*"
+                id="qr-upload-edit"
+                style={{ display: "none" }}
+                onChange={() => setQrSelected(true)}
+              />
+              <Group gap="xs">
+                <label htmlFor="qr-upload-edit" style={{ flex: 1 }}>
+                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                    💳 {listing.qrCode ? "Změnit QR kód" : "Nahrát QR kód platby"}
+                  </Button>
+                </label>
+                {(listing.qrCode || qrSelected) && (
+                  <Button color="red" variant="light" onClick={handleRemoveQr} style={{ flexShrink: 0 }}>
+                    🗑️
+                  </Button>
+                )}
+              </Group>
+              {listing.qrCode && !qrSelected && (
+                <Alert color="blue" variant="light">
+                  ✅ QR kód je nahrán.
+                </Alert>
+              )}
+              {qrSelected && (
+                <Alert color="green" variant="light">
+                  ✅ Nový QR kód byl vybrán.
+                </Alert>
+              )}
+            </Stack>
+
+            <TextInput
+              name="accountNumber"
+              label="Číslo účtu (volitelné)"
+              defaultValue={listing.accountNumber ?? ""}
+              placeholder="např. 123456789/0800"
+            />
 
             <Group justify="space-between">
               <Button color="red" variant="light" onClick={handleDelete}>

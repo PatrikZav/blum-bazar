@@ -10,6 +10,8 @@ export const listing = sqliteTable("listing", {
   status: text().notNull().default("Dostupné"),
   contact: text().notNull(),
   image: text(),
+  qrCode: text(),
+  accountNumber: text(),
   createdAt: int({ mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

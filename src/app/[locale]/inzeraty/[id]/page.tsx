@@ -1,13 +1,14 @@
-import { Badge, Button, Card, Divider, Group, Image, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Divider, Group, Image, Modal, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { EditListingModal } from "@/components/listings/EditListingModal";
+import { PaymentModal } from "@/components/listings/PaymentModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
-import { deleteListing, removeListingImage, updateListing } from "./action";
+import { deleteListing, removeListingImage, removeListingQr, updateListing } from "./action";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -82,7 +83,6 @@ export default async function Page({ params }: Props) {
                 </Text>
                 <Text fw={500}>{item.contact}</Text>
               </Stack>
-
               <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
                 {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
               </Text>
@@ -90,12 +90,16 @@ export default async function Page({ params }: Props) {
 
             <Divider />
 
-            <EditListingModal
-              listing={item}
-              updateListing={updateListing}
-              deleteListing={deleteListing}
-              removeListingImage={removeListingImage}
-            />
+            <Group>
+              <EditListingModal
+                listing={item}
+                updateListing={updateListing}
+                deleteListing={deleteListing}
+                removeListingImage={removeListingImage}
+                removeListingQr={removeListingQr}
+              />
+              {!item.isFree && item.qrCode && <PaymentModal listing={item} />}
+            </Group>
           </Stack>
         </Card>
       </Group>
