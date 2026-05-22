@@ -1,5 +1,4 @@
-/* Stránka detailu jednoho inzerátu */
-import { Badge, Button, Card, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Divider, Group, Image, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -38,60 +37,68 @@ export default async function Page({ params }: Props) {
   if (!item) notFound();
 
   return (
-    <Stack gap="lg" maw={800} mx="auto">
+    <Stack gap="lg" maw={900} mx="auto">
       <Link href="/cs/inzeraty">
         <Button variant="subtle" size="sm">
           ← Zpět na přehled
         </Button>
       </Link>
 
-      <Card shadow="sm" padding="xl" radius="md" withBorder>
-        <Stack gap="md">
-          <Group justify="space-between" align="flex-start">
-            <Title order={2}>{item.title}</Title>
-            <Badge
-              size="lg"
-              color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
-            >
-              {item.status}
-            </Badge>
-          </Group>
+      <Group align="stretch" gap="md" wrap="nowrap">
+        {item.image && (
+          <Card shadow="sm" padding={0} radius="md" withBorder style={{ width: "350px", flexShrink: 0 }}>
+            <Image src={item.image} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </Card>
+        )}
 
-          <Group gap="xs">
-            <Badge variant="light" color="blue">
-              {item.category}
-            </Badge>
-          </Group>
+        <Card shadow="sm" padding="xl" radius="md" withBorder style={{ flex: 1 }}>
+          <Stack gap="md">
+            <Group justify="space-between" align="flex-start">
+              <Title order={2}>{item.title}</Title>
+              <Badge
+                size="lg"
+                color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
+              >
+                {item.status}
+              </Badge>
+            </Group>
 
-          <Divider />
+            <Group gap="xs">
+              <Badge variant="light" color="blue">
+                {item.category}
+              </Badge>
+            </Group>
 
-          <Text size="md">{item.description}</Text>
+            <Divider />
 
-          <Divider />
+            <Text size="md">{item.description}</Text>
 
-          <Group justify="space-between" align="center">
-            <Stack gap={2}>
-              <Text size="sm" c="dimmed">
-                {t("page.listings.contact")}
+            <Divider />
+
+            <Group justify="space-between" align="center">
+              <Stack gap={2}>
+                <Text size="sm" c="dimmed">
+                  {t("page.listings.contact")}
+                </Text>
+                <Text fw={500}>{item.contact}</Text>
+              </Stack>
+
+              <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
+                {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
               </Text>
-              <Text fw={500}>{item.contact}</Text>
-            </Stack>
+            </Group>
 
-            <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
-              {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
-            </Text>
-          </Group>
+            <Divider />
 
-          <Divider />
-
-          <EditListingModal
-            listing={item}
-            updateListing={updateListing}
-            deleteListing={deleteListing}
-            removeListingImage={removeListingImage}
-          />
-        </Stack>
-      </Card>
+            <EditListingModal
+              listing={item}
+              updateListing={updateListing}
+              deleteListing={deleteListing}
+              removeListingImage={removeListingImage}
+            />
+          </Stack>
+        </Card>
+      </Group>
     </Stack>
   );
 }
