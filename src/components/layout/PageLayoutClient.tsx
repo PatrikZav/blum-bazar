@@ -34,7 +34,7 @@ export function PageLayoutClient({ children, session, login, register, logout }:
               {session ? (
                 <>
                   <Text size="sm">
-                    👋 {session.firstName} {session.lastName}
+                    {session.firstName} {session.lastName}
                   </Text>
                   <LogoutButton logout={logout} />
                 </>

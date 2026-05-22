@@ -7,9 +7,10 @@ import { useEffect, useRef, useState } from "react";
 
 interface Props {
   createListing: (formData: FormData) => Promise<void>;
+  userEmail?: string;
 }
 
-export function CreateListingModal({ createListing }: Props) {
+export function CreateListingModal({ createListing, userEmail }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [qrSelected, setQrSelected] = useState(false);
@@ -89,7 +90,13 @@ export function CreateListingModal({ createListing }: Props) {
 
             <Checkbox name="isFree" label="Nabízím zdarma" />
 
-            <TextInput name="contact" label="Kontakt (e-mail)" placeholder="jmeno@blogic.cz" required />
+            <TextInput
+              name="contact"
+              label="Kontakt (e-mail)"
+              placeholder="jmeno@blogic.cz"
+              defaultValue={userEmail ?? ""}
+              required
+            />
 
             <Stack gap={4}>
               <input

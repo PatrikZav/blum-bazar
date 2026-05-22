@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { CreateListingModal } from "@/components/listings/CreateListingModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
+import { getSession } from "@/lib/auth";
 import { createListing } from "./novy/action";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,6 +29,7 @@ export default async function Page({ searchParams }: Props) {
   const params = await searchParams;
   const kategorie = typeof params.kategorie === "string" ? params.kategorie : undefined;
 
+  const session = await getSession();
   const listings = kategorie
     ? await db.select().from(listing).where(eq(listing.category, kategorie))
     : await db.select().from(listing);
@@ -39,7 +41,7 @@ export default async function Page({ searchParams }: Props) {
           <Title>{t("page.listings.title")}</Title>
           <Text c="dimmed">{t("page.listings.description")}</Text>
         </div>
-        <CreateListingModal createListing={createListing} />
+        {session && <CreateListingModal createListing={createListing} userEmail={session.email} />}
       </Group>
 
       <Group gap="xs">
@@ -66,9 +68,9 @@ export default async function Page({ searchParams }: Props) {
           {listings.map((item) => (
             <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
               <Stack gap="sm">
-                <Group justify="space-between" align="flex-start">
-                  <Text fw={600} size="lg" style={{ flex: 1 }}>
-                    {item.title}
+                <Group justify="space-between" align="center">
+                  <Text fw={700} size="sm" c="dimmed">
+                    {item.contact.split("@")[0].charAt(0).toUpperCase()}. {item.contact.split("@")[0].slice(1)}
                   </Text>
                   <Badge
                     color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
@@ -76,6 +78,10 @@ export default async function Page({ searchParams }: Props) {
                     {item.status}
                   </Badge>
                 </Group>
+
+                <Text fw={600} size="lg">
+                  {item.title}
+                </Text>
 
                 <Text c="dimmed" size="sm" lineClamp={2}>
                   {item.description}
