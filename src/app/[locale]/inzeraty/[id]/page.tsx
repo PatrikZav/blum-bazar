@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Group, Image, Modal, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Divider, Group, Image, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { EditListingModal } from "@/components/listings/EditListingModal";
 import { PaymentModal } from "@/components/listings/PaymentModal";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
+import { getSession } from "@/lib/auth";
 import { deleteListing, removeListingImage, removeListingQr, updateListing } from "./action";
 
 type Props = {
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations();
+  const session = await getSession();
 
   const result = await db
     .select()
@@ -36,6 +38,8 @@ export default async function Page({ params }: Props) {
   const item = result[0];
 
   if (!item) notFound();
+
+  const isOwner = session?.id === item.userId;
 
   return (
     <Stack gap="lg" maw={900} mx="auto">
@@ -91,13 +95,15 @@ export default async function Page({ params }: Props) {
             <Divider />
 
             <Group>
-              <EditListingModal
-                listing={item}
-                updateListing={updateListing}
-                deleteListing={deleteListing}
-                removeListingImage={removeListingImage}
-                removeListingQr={removeListingQr}
-              />
+              {isOwner && (
+                <EditListingModal
+                  listing={item}
+                  updateListing={updateListing}
+                  deleteListing={deleteListing}
+                  removeListingImage={removeListingImage}
+                  removeListingQr={removeListingQr}
+                />
+              )}
               {!item.isFree && item.qrCode && <PaymentModal listing={item} />}
             </Group>
           </Stack>
