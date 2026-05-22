@@ -1,4 +1,5 @@
 /* Stránka se všemi inzeráty */
+/* Stránka se všemi inzeráty */
 import { Badge, Button, Card, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
@@ -6,7 +7,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CreateListingModal } from "@/components/listings/CreateListingModal";
 import { db } from "@/db";
-import { listing } from "@/db/schemas";
+import { listing, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
 import { createListing } from "./novy/action";
 
@@ -28,11 +29,14 @@ export default async function Page({ searchParams }: Props) {
   const t = await getTranslations();
   const params = await searchParams;
   const kategorie = typeof params.kategorie === "string" ? params.kategorie : undefined;
-
   const session = await getSession();
+
   const listings = kategorie
     ? await db.select().from(listing).where(eq(listing.category, kategorie))
     : await db.select().from(listing);
+
+  const users = await db.select().from(user);
+  const userMap = new Map(users.map((u) => [u.id, u]));
 
   return (
     <Stack gap="lg">
@@ -65,47 +69,52 @@ export default async function Page({ searchParams }: Props) {
         </Text>
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-          {listings.map((item) => (
-            <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
-              <Stack gap="sm">
-                <Group justify="space-between" align="center">
-                  <Text fw={700} size="sm" c="dimmed">
-                    {item.contact.split("@")[0].charAt(0).toUpperCase()}. {item.contact.split("@")[0].slice(1)}
+          {listings.map((item) => {
+            const owner = item.userId ? userMap.get(item.userId) : null;
+            const ownerName = owner ? `${owner.firstName.charAt(0)}. ${owner.lastName}` : item.contact.split("@")[0];
+
+            return (
+              <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
+                <Stack gap="sm">
+                  <Group justify="space-between" align="center">
+                    <Text fw={700} size="sm" c="dimmed">
+                      {ownerName}
+                    </Text>
+                    <Badge
+                      color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
+                    >
+                      {item.status}
+                    </Badge>
+                  </Group>
+
+                  <Text fw={600} size="lg">
+                    {item.title}
                   </Text>
-                  <Badge
-                    color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
-                  >
-                    {item.status}
-                  </Badge>
-                </Group>
 
-                <Text fw={600} size="lg">
-                  {item.title}
-                </Text>
-
-                <Text c="dimmed" size="sm" lineClamp={2}>
-                  {item.description}
-                </Text>
-
-                <Group gap="xs">
-                  <Badge variant="light" color="blue">
-                    {item.category}
-                  </Badge>
-                </Group>
-
-                <Group justify="space-between" align="center">
-                  <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
-                    {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
+                  <Text c="dimmed" size="sm" lineClamp={2}>
+                    {item.description}
                   </Text>
-                  <Link href={`/cs/inzeraty/${item.id}`}>
-                    <Button variant="light" size="sm">
-                      {t("page.listings.detail")}
-                    </Button>
-                  </Link>
-                </Group>
-              </Stack>
-            </Card>
-          ))}
+
+                  <Group gap="xs">
+                    <Badge variant="light" color="blue">
+                      {item.category}
+                    </Badge>
+                  </Group>
+
+                  <Group justify="space-between" align="center">
+                    <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
+                      {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
+                    </Text>
+                    <Link href={`/cs/inzeraty/${item.id}`}>
+                      <Button variant="light" size="sm">
+                        {t("page.listings.detail")}
+                      </Button>
+                    </Link>
+                  </Group>
+                </Stack>
+              </Card>
+            );
+          })}
         </SimpleGrid>
       )}
     </Stack>

@@ -2,6 +2,7 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const listing = sqliteTable("listing", {
   id: int().primaryKey({ autoIncrement: true }),
+  userId: int(),
   title: text().notNull(),
   description: text().notNull(),
   price: int(),

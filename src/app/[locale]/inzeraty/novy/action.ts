@@ -6,8 +6,10 @@ import { join } from "node:path";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { listing } from "@/db/schemas";
+import { getSession } from "@/lib/auth";
 
 export async function createListing(formData: FormData) {
+  const session = await getSession();
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const price = formData.get("price") as string;
@@ -43,6 +45,7 @@ export async function createListing(formData: FormData) {
   }
 
   await db.insert(listing).values({
+    userId: session?.id ?? null,
     title,
     description,
     price: isFree ? null : Number(price),
