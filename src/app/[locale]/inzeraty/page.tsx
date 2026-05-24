@@ -1,7 +1,6 @@
 /* Stránka se všemi inzeráty */
-/* Stránka se všemi inzeráty */
-import { Badge, Button, Card, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
-import { eq } from "drizzle-orm";
+import { Badge, Button, Card, Group, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
+import { eq, like, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -29,11 +28,20 @@ export default async function Page({ searchParams }: Props) {
   const t = await getTranslations();
   const params = await searchParams;
   const kategorie = typeof params.kategorie === "string" ? params.kategorie : undefined;
+  const query = typeof params.q === "string" ? params.q : undefined;
   const session = await getSession();
 
-  const listings = kategorie
+  let listings = kategorie
     ? await db.select().from(listing).where(eq(listing.category, kategorie))
     : await db.select().from(listing);
+
+  if (query) {
+    const q = `%${query}%`;
+    listings = await db
+      .select()
+      .from(listing)
+      .where(or(like(listing.title, q), like(listing.description, q)));
+  }
 
   const users = await db.select().from(user);
   const userMap = new Map(users.map((u) => [u.id, u]));
@@ -45,7 +53,17 @@ export default async function Page({ searchParams }: Props) {
           <Title>{t("page.listings.title")}</Title>
           <Text c="dimmed">{t("page.listings.description")}</Text>
         </div>
-        {session && <CreateListingModal createListing={createListing} userEmail={session.email} />}
+        <Group>
+          <form method="GET" action="/cs/inzeraty">
+            <TextInput
+              name="q"
+              placeholder="Hledat inzeráty..."
+              defaultValue={query ?? ""}
+              style={{ width: "250px" }}
+            />
+          </form>
+          {session && <CreateListingModal createListing={createListing} userEmail={session.email} />}
+        </Group>
       </Group>
 
       <Group gap="xs">
@@ -63,9 +81,15 @@ export default async function Page({ searchParams }: Props) {
         ))}
       </Group>
 
+      {query && (
+        <Text c="dimmed" size="sm">
+          Výsledky hledání pro: <strong>{query}</strong>
+        </Text>
+      )}
+
       {listings.length === 0 ? (
         <Text c="dimmed" ta="center" py="xl">
-          V této kategorii zatím nejsou žádné inzeráty.
+          {query ? "Žádné inzeráty neodpovídají vašemu hledání." : "V této kategorii zatím nejsou žádné inzeráty."}
         </Text>
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
