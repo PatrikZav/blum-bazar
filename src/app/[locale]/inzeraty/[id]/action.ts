@@ -79,10 +79,28 @@ export async function updateListing(formData: FormData) {
   revalidatePath("/cs/inzeraty");
 }
 
+async function deleteFile(filePath: string) {
+  try {
+    const fullPath = join(process.cwd(), "public", filePath);
+    await unlink(fullPath);
+  } catch {
+    // soubor neexistuje, nevadí
+  }
+}
+
 export async function deleteListing(formData: FormData) {
   const id = formData.get("id") as string;
 
   if (!id) return;
+
+  const result = await db
+    .select()
+    .from(listing)
+    .where(eq(listing.id, Number(id)));
+  const item = result[0];
+
+  if (item?.image) await deleteFile(item.image);
+  if (item?.qrCode) await deleteFile(item.qrCode);
 
   await db.delete(listing).where(eq(listing.id, Number(id)));
 
@@ -100,10 +118,7 @@ export async function removeListingImage(formData: FormData) {
     .where(eq(listing.id, Number(id)));
   const item = result[0];
 
-  if (item?.image) {
-    const filePath = join(process.cwd(), "public", item.image);
-    await unlink(filePath).catch(() => {});
-  }
+  if (item?.image) await deleteFile(item.image);
 
   await db
     .update(listing)
@@ -124,10 +139,7 @@ export async function removeListingQr(formData: FormData) {
     .where(eq(listing.id, Number(id)));
   const item = result[0];
 
-  if (item?.qrCode) {
-    const filePath = join(process.cwd(), "public", item.qrCode);
-    await unlink(filePath).catch(() => {});
-  }
+  if (item?.qrCode) await deleteFile(item.qrCode);
 
   await db
     .update(listing)
