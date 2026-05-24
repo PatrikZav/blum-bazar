@@ -40,7 +40,7 @@ export function PaymentModal({ listing }: Props) {
             {listing.price} Kč
           </Text>
 
-          {listing.qrCode && <Image src={listing.qrCode} alt="QR kód platby" w={220} h={220} fit="contain" />}
+          {listing.qrCode && <Image src={listing.qrCode} alt="QR kód platby" w={440} h={440} fit="contain" />}
 
           {listing.accountNumber && (
             <>
