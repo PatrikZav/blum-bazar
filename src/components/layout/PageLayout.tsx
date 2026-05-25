@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from "react";
+import { changePassword, deleteAccount } from "@/app/actions/account";
 import { login, logout, register } from "@/app/actions/auth";
 import { getSession } from "@/lib/auth";
 import { PageLayoutClient } from "./PageLayoutClient";
@@ -7,7 +8,14 @@ export async function PageLayout({ children }: PropsWithChildren) {
   const session = await getSession();
 
   return (
-    <PageLayoutClient session={session} login={login} register={register} logout={logout}>
+    <PageLayoutClient
+      session={session}
+      login={login}
+      register={register}
+      logout={logout}
+      changePassword={changePassword}
+      deleteAccount={deleteAccount}
+    >
       {children}
     </PageLayoutClient>
   );

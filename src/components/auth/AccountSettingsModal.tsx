@@ -2,27 +2,15 @@
 
 import { Alert, Button, Divider, Group, Menu, Modal, PasswordInput, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface Session {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-}
-
 interface Props {
-  session: Session;
-  logout: () => Promise<void>;
   changePassword: (formData: FormData) => Promise<{ error?: string; success?: boolean }>;
   deleteAccount: (formData: FormData) => Promise<{ error?: string } | void>;
 }
 
-export function UserMenu({ session, logout, changePassword, deleteAccount }: Props) {
-  const router = useRouter();
-  const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
+export function AccountSettingsModal({ changePassword, deleteAccount }: Props) {
+  const [opened, { open, close }] = useDisclosure(false);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
@@ -49,39 +37,11 @@ export function UserMenu({ session, logout, changePassword, deleteAccount }: Pro
 
   return (
     <>
-      <Menu shadow="md" width={200} position="bottom-end">
-        <Menu.Target>
-          <Button variant="outline" size="sm">
-            {session.firstName} {session.lastName}
-          </Button>
-        </Menu.Target>
+      <Menu.Item onClick={open}>Nastavení účtu</Menu.Item>
 
-        <Menu.Dropdown>
-          <Menu.Item onClick={() => router.push(`/cs/inzeraty?userId=${session.id}`)}>Moje inzeráty</Menu.Item>
-
-          <Menu.Item onClick={() => router.push(`/cs/inzeraty?oblibene=1`)}>Oblíbené</Menu.Item>
-
-          <Menu.Divider />
-
-          <Menu.Item onClick={openSettings}>Nastavení účtu</Menu.Item>
-
-          <Menu.Divider />
-
-          <Menu.Item
-            color="red"
-            onClick={async () => {
-              await logout();
-            }}
-          >
-            Odhlásit se
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
-
-      {/* Nastavení účtu Modal */}
       <Modal
-        opened={settingsOpened}
-        onClose={closeSettings}
+        opened={opened}
+        onClose={close}
         title="Nastavení účtu"
         size="sm"
         overlayProps={{ backgroundOpacity: 0.35, blur: 8 }}
@@ -135,7 +95,7 @@ export function UserMenu({ session, logout, changePassword, deleteAccount }: Pro
             variant="light"
             fullWidth
             onClick={() => {
-              closeSettings();
+              close();
               openDelete();
             }}
           >
@@ -144,7 +104,6 @@ export function UserMenu({ session, logout, changePassword, deleteAccount }: Pro
         </Stack>
       </Modal>
 
-      {/* Potvrzení smazání Modal */}
       <Modal
         opened={deleteOpened}
         onClose={closeDelete}
