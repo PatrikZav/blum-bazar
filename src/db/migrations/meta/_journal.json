@@ -57,6 +57,13 @@
       "when": 1779689804557,
       "tag": "0007_careless_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1779691141813,
+      "tag": "0008_open_kylun",
+      "breakpoints": true
     }
   ]
 }
