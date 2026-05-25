@@ -111,7 +111,7 @@ export default async function Page({ params }: Props) {
                   removeListingQr={removeListingQr}
                 />
               )}
-              {!item.isFree && item.qrCode && <PaymentModal listing={item} />}
+              {!item.isFree && (item.qrCode || item.accountNumber) && <PaymentModal listing={item} />}
             </Group>
           </Stack>
         </Card>

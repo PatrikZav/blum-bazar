@@ -24,6 +24,10 @@ export async function changePassword(formData: FormData) {
     return { error: "Nová hesla se neshodují." };
   }
 
+  if (currentPassword === newPassword) {
+    return { error: "Nové heslo je stejné jako to stávající." };
+  }
+
   if (newPassword.length < 6) {
     return { error: "Heslo musí mít alespoň 6 znaků." };
   }

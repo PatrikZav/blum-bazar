@@ -14,6 +14,7 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [qrSelected, setQrSelected] = useState(false);
+  const [isFree, setIsFree] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qrInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
@@ -86,9 +87,14 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
             />
 
-            <NumberInput name="price" label="Cena (Kč)" placeholder="např. 500" min={0} />
+            <NumberInput name="price" label="Cena (Kč)" placeholder="např. 500" min={0} required={!isFree} />
 
-            <Checkbox name="isFree" label="Nabízím zdarma" />
+            <Checkbox
+              name="isFree"
+              label="Nabízím zdarma"
+              checked={isFree}
+              onChange={(e) => setIsFree(e.currentTarget.checked)}
+            />
 
             <TextInput
               name="contact"

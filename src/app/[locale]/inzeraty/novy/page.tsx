@@ -3,6 +3,7 @@ import { Button, Card, Checkbox, NumberInput, Select, Stack, Text, Textarea, Tex
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { PriceFields } from "@/components/listings/PriceFields";
 import { createListing } from "./action";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,9 +53,10 @@ export default async function Page() {
               data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
             />
 
-            <NumberInput name="price" label={t("page.createListing.fieldPrice")} placeholder="např. 500" min={0} />
-
-            <Checkbox name="isFree" label={t("page.createListing.fieldIsFree")} />
+            <PriceFields
+              priceLabel={t("page.createListing.fieldPrice")}
+              freeLabel={t("page.createListing.fieldIsFree")}
+            />
 
             <TextInput
               name="contact"
