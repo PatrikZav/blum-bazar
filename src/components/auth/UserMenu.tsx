@@ -4,6 +4,7 @@ import { Alert, Button, Divider, Group, Menu, Modal, PasswordInput, Stack, Text 
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AdminUsersModal } from "@/components/auth/AdminUsersModal";
 
 interface Session {
   id: number;
@@ -18,12 +19,29 @@ interface Props {
   logout: () => Promise<void>;
   changePassword: (formData: FormData) => Promise<{ error?: string; success?: boolean }>;
   deleteAccount: (formData: FormData) => Promise<{ error?: string } | void>;
+  getAllUsers: () => Promise<{
+    users?: { id: number; firstName: string; lastName: string; email: string; role: string; createdAt: Date }[];
+    error?: string;
+  }>;
+  adminChangePassword: (userId: number, newPassword: string) => Promise<{ success?: boolean; error?: string }>;
+  adminChangeRole: (userId: number, newRole: string) => Promise<{ success?: boolean; error?: string }>;
+  adminDeleteUser: (userId: number) => Promise<{ success?: boolean; error?: string }>;
 }
 
-export function UserMenu({ session, logout, changePassword, deleteAccount }: Props) {
+export function UserMenu({
+  session,
+  logout,
+  changePassword,
+  deleteAccount,
+  getAllUsers,
+  adminChangePassword,
+  adminChangeRole,
+  adminDeleteUser,
+}: Props) {
   const router = useRouter();
   const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+  const [adminOpened, { open: openAdmin, close: closeAdmin }] = useDisclosure(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -64,6 +82,8 @@ export function UserMenu({ session, logout, changePassword, deleteAccount }: Pro
           <Menu.Divider />
 
           <Menu.Item onClick={openSettings}>Nastavení účtu</Menu.Item>
+
+          {session.role === "admin" && <Menu.Item onClick={openAdmin}>Správa uživatelů</Menu.Item>}
 
           <Menu.Divider />
 
@@ -186,6 +206,18 @@ export function UserMenu({ session, logout, changePassword, deleteAccount }: Pro
           </form>
         </Stack>
       </Modal>
+
+      {session.role === "admin" && (
+        <AdminUsersModal
+          opened={adminOpened}
+          onClose={closeAdmin}
+          getAllUsers={getAllUsers}
+          adminChangePassword={adminChangePassword}
+          adminChangeRole={adminChangeRole}
+          adminDeleteUser={adminDeleteUser}
+          currentUserId={session.id}
+        />
+      )}
     </>
   );
 }

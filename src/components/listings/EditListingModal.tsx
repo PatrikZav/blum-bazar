@@ -23,6 +23,7 @@ export function EditListingModal({
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [qrSelected, setQrSelected] = useState(false);
+  const [isFree, setIsFree] = useState(listing.isFree);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qrInputRef = useRef<HTMLInputElement>(null);
@@ -106,9 +107,20 @@ export function EditListingModal({
               data={["Dostupné", "Rezervováno", "Prodáno / předáno"]}
             />
 
-            <NumberInput name="price" label="Cena (Kč)" defaultValue={listing.price ?? undefined} min={0} />
+            <NumberInput
+              name="price"
+              label="Cena (Kč)"
+              defaultValue={listing.price ?? undefined}
+              min={0}
+              required={!isFree}
+            />
 
-            <Checkbox name="isFree" label="Nabízím zdarma" defaultChecked={listing.isFree} />
+            <Checkbox
+              name="isFree"
+              label="Nabízím zdarma"
+              checked={isFree}
+              onChange={(e) => setIsFree(e.currentTarget.checked)}
+            />
 
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 

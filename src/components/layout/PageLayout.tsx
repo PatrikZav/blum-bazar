@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { changePassword, deleteAccount } from "@/app/actions/account";
+import { adminChangePassword, adminChangeRole, adminDeleteUser, getAllUsers } from "@/app/actions/admin";
 import { login, logout, register } from "@/app/actions/auth";
 import { getSession } from "@/lib/auth";
 import { PageLayoutClient } from "./PageLayoutClient";
@@ -15,6 +16,10 @@ export async function PageLayout({ children }: PropsWithChildren) {
       logout={logout}
       changePassword={changePassword}
       deleteAccount={deleteAccount}
+      getAllUsers={getAllUsers}
+      adminChangePassword={adminChangePassword}
+      adminChangeRole={adminChangeRole}
+      adminDeleteUser={adminDeleteUser}
     >
       {children}
     </PageLayoutClient>
