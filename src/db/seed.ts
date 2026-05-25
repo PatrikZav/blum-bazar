@@ -3,50 +3,160 @@ import { db } from "./index";
 import { listing } from "./schemas";
 
 await db.insert(listing).values([
+  // ======================
+  // 🪑 NÁBYTEK
+  // Patrik + Petr
+  // ======================
+
   {
-    title: "Dětská židle",
-    description: "Dětská jídelní židle IKEA Antilop, dobrý stav, použitá 2 roky.",
-    price: 300,
+    title: "Kancelářská židle ErgoFlex",
+    description: "Ergonomická kancelářská židle s nastavitelnou výškou a opěrkou zad.",
+    price: 900,
+    isFree: false,
+    category: "Nábytek",
+    status: "Dostupné",
+    contact: "patazavadil@seznam.cz",
+    userId: 2,
+  },
+  {
+    title: "Dřevěný jídelní stůl",
+    description: "Masivní jídelní stůl pro 4 osoby, stabilní konstrukce.",
+    price: 3000,
+    isFree: false,
+    category: "Nábytek",
+    status: "Dostupné",
+    contact: "petr.svoboda@blogic.cz",
+    userId: 7,
+  },
+
+  // ======================
+  // 🧸 DĚTSKÉ VĚCI
+  // Lucie + Tereza
+  // ======================
+
+  {
+    title: "Dětská autosedačka",
+    description: "Autosedačka 0–18 kg, po jednom dítěti, čistá a nebouraná.",
+    price: 800,
     isFree: false,
     category: "Dětské věci",
     status: "Dostupné",
-    contact: "jana.novakova@blogic.cz",
+    contact: "lucie.dvorakova@blogic.cz",
+    userId: 8,
+  },
+  {
+    title: "Sportovní kočárek",
+    description: "Lehký kočárek vhodný na cestování, snadno složitelný.",
+    price: 1200,
+    isFree: false,
+    category: "Dětské věci",
+    status: "Dostupné",
+    contact: "tereza.mala@blogic.cz",
+    userId: 9,
+  },
+
+  // ======================
+  // 👕 OBLEČENÍ
+  // David + Martin
+  // ======================
+
+  {
+    title: "Zimní bunda Nike",
+    description: "Teplá zimní bunda, dobrý stav, lehce nošená.",
+    price: 700,
+    isFree: false,
+    category: "Oblečení",
+    status: "Dostupné",
+    contact: "david.prochazka@blogic.cz",
+    userId: 10,
+  },
+  {
+    title: "Tenisky Adidas",
+    description: "Sportovní boty, lehce nošené, stále pohodlné.",
+    price: 500,
+    isFree: false,
+    category: "Oblečení",
+    status: "Dostupné",
+    contact: "martin.kral@blogic.cz",
+    userId: 11,
+  },
+
+  // ======================
+  // 💻 ELEKTRONIKA
+  // Patrik + Petr
+  // ======================
+
+  {
+    title: "Notebook HP",
+    description: "Funkční notebook vhodný na školu i práci.",
+    price: 2500,
+    isFree: false,
+    category: "Elektronika",
+    status: "Dostupné",
+    contact: "patazavadil@seznam.cz",
+    userId: 2,
   },
   {
     title: 'Starší monitor 24"',
-    description: "Dell monitor 24 palců, Full HD, HDMI + VGA. Funguje bez problémů.",
+    description: "Dell monitor 24 palců, Full HD, HDMI + VGA. Plně funkční.",
     price: 800,
     isFree: false,
     category: "Elektronika",
     status: "Dostupné",
     contact: "petr.svoboda@blogic.cz",
+    userId: 7,
   },
+
+  // ======================
+  // 📚 KNIHY
+  // Lucie + Tereza
+  // ======================
+
   {
-    title: "Krabice knih",
-    description: "Asi 20 knih — detektivky, romány a pár odborných. Vezmi si co chceš.",
-    price: null,
-    isFree: true,
+    title: "Harry Potter série",
+    description: "Kompletní knižní série v dobrém stavu.",
+    price: 800,
+    isFree: false,
     category: "Knihy",
     status: "Dostupné",
-    contact: "marie.horakova@blogic.cz",
+    contact: "lucie.dvorakova@blogic.cz",
+    userId: 8,
   },
   {
-    title: "Konferenční stolek",
-    description: "Dřevěný konferenční stolek, rozměr 90x50 cm. Pár škrábanců ale jinak OK.",
-    price: 500,
+    title: "Učebnice matematiky SŠ",
+    description: "Středoškolská matematika, lehce popsaná.",
+    price: 150,
     isFree: false,
-    category: "Nábytek",
+    category: "Knihy",
     status: "Dostupné",
-    contact: "tomas.kral@blogic.cz",
+    contact: "tereza.mala@blogic.cz",
+    userId: 9,
+  },
+
+  // ======================
+  // 📦 OSTATNÍ
+  // David + Martin
+  // ======================
+
+  {
+    title: "Fitness sada (činky + gumy)",
+    description: "Domácí fitness vybavení pro cvičení.",
+    price: 900,
+    isFree: false,
+    category: "Ostatní",
+    status: "Dostupné",
+    contact: "david.prochazka@blogic.cz",
+    userId: 10,
   },
   {
-    title: "Zimní bunda vel. M",
-    description: "Černá zimní bunda, velikost M, nosila jsem ji 1 sezónu.",
-    price: 200,
+    title: "Horské kolo",
+    description: "Starší, ale plně funkční horské kolo.",
+    price: 2000,
     isFree: false,
-    category: "Oblečení",
-    status: "Rezervováno",
-    contact: "lucie.mala@blogic.cz",
+    category: "Ostatní",
+    status: "Dostupné",
+    contact: "martin.kral@blogic.cz",
+    userId: 11,
   },
 ]);
 
