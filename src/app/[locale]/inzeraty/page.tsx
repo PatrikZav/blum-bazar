@@ -1,12 +1,14 @@
 /* Stránka se všemi inzeráty */
 import { Badge, Button, Card, Group, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
-import { eq, like, or } from "drizzle-orm";
+import { and, eq, inArray, like, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { toggleFavorite } from "@/app/actions/favorites";
 import { CreateListingModal } from "@/components/listings/CreateListingModal";
+import { FavoriteButton } from "@/components/listings/FavoriteButton";
 import { db } from "@/db";
-import { listing, user } from "@/db/schemas";
+import { favorite, listing, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
 import { createListing } from "./novy/action";
 
@@ -30,6 +32,7 @@ export default async function Page({ searchParams }: Props) {
   const kategorie = typeof params.kategorie === "string" ? params.kategorie : undefined;
   const query = typeof params.q === "string" ? params.q : undefined;
   const userId = typeof params.userId === "string" ? params.userId : undefined;
+  const oblibene = params.oblibene === "1";
   const session = await getSession();
 
   let listings = kategorie
@@ -51,8 +54,17 @@ export default async function Page({ searchParams }: Props) {
       .where(eq(listing.userId, Number(userId)));
   }
 
+  if (oblibene && session) {
+    const favorites = await db.select().from(favorite).where(eq(favorite.userId, session.id));
+    const ids = favorites.map((f) => f.listingId);
+    listings = ids.length > 0 ? await db.select().from(listing).where(inArray(listing.id, ids)) : [];
+  }
+
   const users = await db.select().from(user);
   const userMap = new Map(users.map((u) => [u.id, u]));
+
+  const userFavorites = session ? await db.select().from(favorite).where(eq(favorite.userId, session.id)) : [];
+  const favoriteIds = new Set(userFavorites.map((f) => f.listingId));
 
   return (
     <Stack gap="lg">
@@ -101,15 +113,26 @@ export default async function Page({ searchParams }: Props) {
         </Text>
       )}
 
+      {oblibene && (
+        <Text c="dimmed" size="sm">
+          Zobrazuji: <strong>Oblíbené inzeráty</strong>
+        </Text>
+      )}
+
       {listings.length === 0 ? (
         <Text c="dimmed" ta="center" py="xl">
-          {query ? "Žádné inzeráty neodpovídají vašemu hledání." : "V této kategorii zatím nejsou žádné inzeráty."}
+          {query
+            ? "Žádné inzeráty neodpovídají vašemu hledání."
+            : oblibene
+              ? "Zatím nemáte žádné oblíbené inzeráty."
+              : "V této kategorii zatím nejsou žádné inzeráty."}
         </Text>
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
           {listings.map((item) => {
             const owner = item.userId ? userMap.get(item.userId) : null;
             const ownerName = owner ? `${owner.firstName.charAt(0)}. ${owner.lastName}` : item.contact.split("@")[0];
+            const isFavorited = favoriteIds.has(item.id);
 
             return (
               <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
@@ -118,11 +141,16 @@ export default async function Page({ searchParams }: Props) {
                     <Text fw={700} size="sm" c="dimmed">
                       {ownerName}
                     </Text>
-                    <Badge
-                      color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
-                    >
-                      {item.status}
-                    </Badge>
+                    <Group gap="xs">
+                      <Badge
+                        color={item.status === "Dostupné" ? "green" : item.status === "Rezervováno" ? "yellow" : "gray"}
+                      >
+                        {item.status}
+                      </Badge>
+                      {session && (
+                        <FavoriteButton listingId={item.id} isFavorited={isFavorited} toggleFavorite={toggleFavorite} />
+                      )}
+                    </Group>
                   </Group>
 
                   <Text fw={600} size="lg">

@@ -30,6 +30,8 @@ export function UserMenu({ session, logout }: Props) {
       <Menu.Dropdown>
         <Menu.Item onClick={() => router.push(`/cs/inzeraty?userId=${session.id}`)}>Moje inzeráty</Menu.Item>
 
+        <Menu.Item onClick={() => router.push(`/cs/inzeraty?oblibene=1`)}>Oblíbené</Menu.Item>
+
         <Menu.Divider />
 
         <Menu.Item
