@@ -20,5 +20,11 @@ export async function getSession() {
     firstName: found.firstName,
     lastName: found.lastName,
     email: found.email,
+    role: found.role,
   };
+}
+
+export async function isAdmin() {
+  const session = await getSession();
+  return session?.role === "admin";
 }

@@ -40,6 +40,8 @@ export default async function Page({ params }: Props) {
   if (!item) notFound();
 
   const isOwner = session?.id === item.userId;
+  const isAdmin = session?.role === "admin";
+  const canEdit = isOwner || isAdmin;
 
   return (
     <Stack gap="lg" maw={900} mx="auto">
@@ -72,6 +74,11 @@ export default async function Page({ params }: Props) {
               <Badge variant="light" color="blue">
                 {item.category}
               </Badge>
+              {isAdmin && (
+                <Badge variant="light" color="orange">
+                  Admin
+                </Badge>
+              )}
             </Group>
 
             <Divider />
@@ -95,7 +102,7 @@ export default async function Page({ params }: Props) {
             <Divider />
 
             <Group>
-              {isOwner && (
+              {canEdit && (
                 <EditListingModal
                   listing={item}
                   updateListing={updateListing}
