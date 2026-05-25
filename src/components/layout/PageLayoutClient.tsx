@@ -3,7 +3,7 @@
 import { AppShell, Container, Group, Text } from "@mantine/core";
 import type { PropsWithChildren } from "react";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { LogoutButton } from "@/components/auth/LogoutButton";
+import { UserMenu } from "@/components/auth/UserMenu";
 import { PageLogo } from "@/components/layout/PageLogo";
 
 interface Session {
@@ -11,6 +11,7 @@ interface Session {
   firstName: string;
   lastName: string;
   email: string;
+  role: string;
 }
 
 interface Props extends PropsWithChildren {
@@ -32,12 +33,7 @@ export function PageLayoutClient({ children, session, login, register, logout }:
             <PageLogo />
             <Group>
               {session ? (
-                <>
-                  <Text size="sm">
-                    {session.firstName} {session.lastName}
-                  </Text>
-                  <LogoutButton logout={logout} />
-                </>
+                <UserMenu session={session} logout={logout} />
               ) : (
                 <AuthModal login={login} register={register} />
               )}

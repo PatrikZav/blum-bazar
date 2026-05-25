@@ -29,6 +29,7 @@ export default async function Page({ searchParams }: Props) {
   const params = await searchParams;
   const kategorie = typeof params.kategorie === "string" ? params.kategorie : undefined;
   const query = typeof params.q === "string" ? params.q : undefined;
+  const userId = typeof params.userId === "string" ? params.userId : undefined;
   const session = await getSession();
 
   let listings = kategorie
@@ -41,6 +42,13 @@ export default async function Page({ searchParams }: Props) {
       .select()
       .from(listing)
       .where(or(like(listing.title, q), like(listing.description, q)));
+  }
+
+  if (userId) {
+    listings = await db
+      .select()
+      .from(listing)
+      .where(eq(listing.userId, Number(userId)));
   }
 
   const users = await db.select().from(user);
@@ -84,6 +92,12 @@ export default async function Page({ searchParams }: Props) {
       {query && (
         <Text c="dimmed" size="sm">
           Výsledky hledání pro: <strong>{query}</strong>
+        </Text>
+      )}
+
+      {userId && (
+        <Text c="dimmed" size="sm">
+          Zobrazuji: <strong>Moje inzeráty</strong>
         </Text>
       )}
 
