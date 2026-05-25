@@ -4,10 +4,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { createReview, getSellerStats } from "@/app/actions/reviews";
 import { EditListingModal } from "@/components/listings/EditListingModal";
 import { PaymentModal } from "@/components/listings/PaymentModal";
+import { SellerProfile } from "@/components/listings/SellerProfile";
 import { db } from "@/db";
-import { listing } from "@/db/schemas";
+import { listing, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
 import { deleteListing, removeListingImage, removeListingQr, updateListing } from "./action";
 
@@ -42,6 +44,17 @@ export default async function Page({ params }: Props) {
   const isOwner = session?.id === item.userId;
   const isAdmin = session?.role === "admin";
   const canEdit = isOwner || isAdmin;
+
+  let seller = null;
+  let sellerStats = { count: 0, avg: 0 };
+
+  if (item.userId) {
+    const sellerResult = await db.select().from(user).where(eq(user.id, item.userId));
+    seller = sellerResult[0] ?? null;
+    sellerStats = await getSellerStats(item.userId);
+  }
+
+  const canReview = !!session && !isOwner;
 
   return (
     <Stack gap="lg" maw={900} mx="auto">
@@ -116,6 +129,18 @@ export default async function Page({ params }: Props) {
           </Stack>
         </Card>
       </Group>
+
+      {seller && (
+        <SellerProfile
+          seller={seller}
+          listingId={item.id}
+          listingTitle={item.title}
+          avgRating={sellerStats.avg}
+          reviewCount={sellerStats.count}
+          canReview={canReview}
+          createReview={createReview}
+        />
+      )}
     </Stack>
   );
 }
