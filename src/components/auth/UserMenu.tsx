@@ -4,7 +4,9 @@ import { Alert, Button, Divider, Group, Menu, Modal, PasswordInput, Stack, Text 
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { deleteReview, getMyReviews, getReceivedReviews, updateReview } from "@/app/actions/reviews";
 import { AdminUsersModal } from "@/components/auth/AdminUsersModal";
+import { ReviewsModal } from "@/components/auth/ReviewsModal";
 
 interface Session {
   id: number;
@@ -42,6 +44,7 @@ export function UserMenu({
   const [settingsOpened, { open: openSettings, close: closeSettings }] = useDisclosure(false);
   const [deleteOpened, { open: openDelete, close: closeDelete }] = useDisclosure(false);
   const [adminOpened, { open: openAdmin, close: closeAdmin }] = useDisclosure(false);
+  const [reviewsOpened, { open: openReviews, close: closeReviews }] = useDisclosure(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -78,6 +81,8 @@ export function UserMenu({
           <Menu.Item onClick={() => router.push(`/cs/inzeraty?userId=${session.id}`)}>Moje inzeráty</Menu.Item>
 
           <Menu.Item onClick={() => router.push(`/cs/inzeraty?oblibene=1`)}>Oblíbené</Menu.Item>
+
+          <Menu.Item onClick={openReviews}>Recenze</Menu.Item>
 
           <Menu.Divider />
 
@@ -218,6 +223,15 @@ export function UserMenu({
           currentUserId={session.id}
         />
       )}
+
+      <ReviewsModal
+        opened={reviewsOpened}
+        onClose={closeReviews}
+        getMyReviews={getMyReviews}
+        getReceivedReviews={getReceivedReviews}
+        updateReview={updateReview}
+        deleteReview={deleteReview}
+      />
     </>
   );
 }
