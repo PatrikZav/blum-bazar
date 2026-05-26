@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { createReview, getSellerStats } from "@/app/actions/reviews";
+import { createReview, getSellerReviews, getSellerStats } from "@/app/actions/reviews";
 import { EditListingModal } from "@/components/listings/EditListingModal";
 import { PaymentModal } from "@/components/listings/PaymentModal";
 import { SellerProfile } from "@/components/listings/SellerProfile";
@@ -47,11 +47,13 @@ export default async function Page({ params }: Props) {
 
   let seller = null;
   let sellerStats = { count: 0, avg: 0 };
+  let reviews: Awaited<ReturnType<typeof getSellerReviews>> = [];
 
   if (item.userId) {
     const sellerResult = await db.select().from(user).where(eq(user.id, item.userId));
     seller = sellerResult[0] ?? null;
     sellerStats = await getSellerStats(item.userId);
+    reviews = await getSellerReviews(item.userId);
   }
 
   const canReview = !!session && !isOwner;
@@ -139,6 +141,7 @@ export default async function Page({ params }: Props) {
           reviewCount={sellerStats.count}
           canReview={canReview}
           createReview={createReview}
+          reviews={reviews}
         />
       )}
     </Stack>
