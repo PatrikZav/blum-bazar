@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { review } from "@/db/schemas";
+import { review, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
 
 export async function createReview(formData: FormData) {
@@ -37,4 +37,21 @@ export async function getSellerStats(sellerId: number) {
   const avg = count > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / count : 0;
 
   return { count, avg };
+}
+
+export async function getSellerReviews(sellerId: number) {
+  const reviews = await db.select().from(review).where(eq(review.sellerId, sellerId));
+
+  const reviewsWithUsers = await Promise.all(
+    reviews.map(async (r) => {
+      const authorResult = await db.select().from(user).where(eq(user.id, r.userId));
+      const author = authorResult[0];
+      return {
+        ...r,
+        authorName: author ? `${author.firstName} ${author.lastName}` : "Anonymní",
+      };
+    }),
+  );
+
+  return reviewsWithUsers;
 }
