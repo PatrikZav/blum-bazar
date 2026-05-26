@@ -11,7 +11,7 @@ import { SellerProfile } from "@/components/listings/SellerProfile";
 import { db } from "@/db";
 import { listing, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
-import { deleteListing, removeListingImage, removeListingQr, updateListing } from "./action";
+import { deleteListing, removeListingImage, updateListing } from "./action";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -123,10 +123,14 @@ export default async function Page({ params }: Props) {
                   updateListing={updateListing}
                   deleteListing={deleteListing}
                   removeListingImage={removeListingImage}
-                  removeListingQr={removeListingQr}
                 />
               )}
-              {!item.isFree && (item.qrCode || item.accountNumber) && <PaymentModal listing={item} />}
+              {!item.isFree && item.accountNumber && (
+                <PaymentModal
+                  listing={item}
+                  buyerName={session ? `${session.firstName} ${session.lastName}` : undefined}
+                />
+              )}
             </Group>
           </Stack>
         </Card>
