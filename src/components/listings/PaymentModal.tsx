@@ -1,15 +1,52 @@
 "use client";
 
-import { Button, Divider, Image, Modal, Stack, Text, Title } from "@mantine/core";
+import { Button, Divider, Modal, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import QRCode from "qrcode";
+import { useEffect, useState } from "react";
 import type { Listing } from "@/db/schemas";
 
 interface Props {
   listing: Listing;
+  buyerName?: string;
 }
 
-export function PaymentModal({ listing }: Props) {
+function accountToIban(accountNumber: string): string | null {
+  const parts = accountNumber.split("/");
+  if (parts.length !== 2) return null;
+
+  const [account, bankCode] = parts;
+  const paddedAccount = account.replace("-", "").padStart(16, "0");
+  const bban = `${bankCode}${paddedAccount}`;
+  const numericIban = `${bban}123500`;
+  const mod = BigInt(numericIban) % 97n;
+  const checkDigits = String(98n - mod).padStart(2, "0");
+  return `CZ${checkDigits}${bban}`;
+}
+
+export function PaymentModal({ listing, buyerName }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!opened || !listing.accountNumber) return;
+
+    const iban = accountToIban(listing.accountNumber);
+    if (!iban) return;
+
+    const message = buyerName ? `${buyerName} - ${listing.title}` : listing.title;
+
+    const spdString = [
+      "SPD*1.0",
+      `ACC:${iban}`,
+      listing.price ? `AM:${listing.price}.00` : null,
+      `MSG:${message.substring(0, 60)}`,
+    ]
+      .filter(Boolean)
+      .join("*");
+
+    QRCode.toDataURL(spdString, { width: 300, margin: 2 }).then(setQrDataUrl).catch(console.error);
+  }, [opened, listing, buyerName]);
 
   return (
     <>
@@ -40,24 +77,28 @@ export function PaymentModal({ listing }: Props) {
             {listing.price} Kč
           </Text>
 
-          {listing.qrCode && <Image src={listing.qrCode} alt="QR kód platby" w={440} h={440} fit="contain" />}
-
-          {listing.accountNumber && (
-            <>
-              <Divider w="100%" />
-              <Stack gap={4} align="center">
-                <Text size="sm" c="dimmed">
-                  Číslo účtu
-                </Text>
-                <Text fw={600}>{listing.accountNumber}</Text>
-              </Stack>
-            </>
+          {qrDataUrl ? (
+            <img src={qrDataUrl} alt="QR kód platby" width={300} height={300} />
+          ) : (
+            <Text c="dimmed" size="sm">
+              Generuji QR kód...
+            </Text>
           )}
 
           <Divider w="100%" />
 
+          <Stack gap={4} align="center">
+            <Text size="sm" c="dimmed">
+              Číslo účtu
+            </Text>
+            <Text fw={600}>{listing.accountNumber}</Text>
+          </Stack>
+
+          <Divider w="100%" />
+
           <Text size="sm" c="dimmed" ta="center">
-            ⚠️ Při platbě nezapomeňte uvést své jméno jako poznámku.
+            ⚠️ Zpráva pro příjemce: {buyerName ? `${buyerName} - ` : ""}
+            {listing.title}
           </Text>
         </Stack>
       </Modal>

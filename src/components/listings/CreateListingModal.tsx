@@ -13,10 +13,8 @@ interface Props {
 export function CreateListingModal({ createListing, userEmail }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
-  const [qrSelected, setQrSelected] = useState(false);
   const [isFree, setIsFree] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const qrInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -29,25 +27,15 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
     await createListing(formData);
     close();
     setImageSelected(false);
-    setQrSelected(false);
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setImageSelected(!!e.target.files?.[0]);
   }
 
-  function handleQrChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setQrSelected(!!e.target.files?.[0]);
-  }
-
   function handleRemoveImage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
     setImageSelected(false);
-  }
-
-  function handleRemoveQr() {
-    if (qrInputRef.current) qrInputRef.current.value = "";
-    setQrSelected(false);
   }
 
   return (
@@ -133,36 +121,11 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               )}
             </Stack>
 
-            <Stack gap={4}>
-              <input
-                ref={qrInputRef}
-                name="qrCode"
-                type="file"
-                accept="image/*"
-                id="qr-upload-create"
-                style={{ display: "none" }}
-                onChange={handleQrChange}
-              />
-              <Group gap="xs">
-                <label htmlFor="qr-upload-create" style={{ flex: 1 }}>
-                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                    💳 Nahrát QR kód platby
-                  </Button>
-                </label>
-                {qrSelected && (
-                  <Button color="red" variant="light" onClick={handleRemoveQr} style={{ flexShrink: 0 }}>
-                    🗑️
-                  </Button>
-                )}
-              </Group>
-              {qrSelected && (
-                <Alert color="green" variant="light">
-                  ✅ QR kód byl vybrán.
-                </Alert>
-              )}
-            </Stack>
-
-            <TextInput name="accountNumber" label="Číslo účtu (volitelné)" placeholder="např. 123456789/0800" />
+            <TextInput
+              name="accountNumber"
+              label="Číslo účtu pro platbu (volitelné)"
+              placeholder="např. 123456789/0800"
+            />
 
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>

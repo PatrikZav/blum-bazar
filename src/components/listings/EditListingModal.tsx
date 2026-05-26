@@ -10,29 +10,19 @@ interface Props {
   updateListing: (formData: FormData) => Promise<void>;
   deleteListing: (formData: FormData) => Promise<void>;
   removeListingImage: (formData: FormData) => Promise<void>;
-  removeListingQr: (formData: FormData) => Promise<void>;
 }
 
-export function EditListingModal({
-  listing,
-  updateListing,
-  deleteListing,
-  removeListingImage,
-  removeListingQr,
-}: Props) {
+export function EditListingModal({ listing, updateListing, deleteListing, removeListingImage }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
-  const [qrSelected, setQrSelected] = useState(false);
   const [isFree, setIsFree] = useState(listing.isFree);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const qrInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(formData: FormData) {
     await updateListing(formData);
     close();
     setImageSelected(false);
-    setQrSelected(false);
   }
 
   async function handleDelete() {
@@ -48,16 +38,6 @@ export function EditListingModal({
       const formData = new FormData();
       formData.append("id", String(listing.id));
       await removeListingImage(formData);
-    }
-  }
-
-  async function handleRemoveQr() {
-    if (qrInputRef.current) qrInputRef.current.value = "";
-    setQrSelected(false);
-    if (listing.qrCode) {
-      const formData = new FormData();
-      formData.append("id", String(listing.id));
-      await removeListingQr(formData);
     }
   }
 
@@ -158,43 +138,9 @@ export function EditListingModal({
               )}
             </Stack>
 
-            <Stack gap={4}>
-              <input
-                ref={qrInputRef}
-                name="qrCode"
-                type="file"
-                accept="image/*"
-                id="qr-upload-edit"
-                style={{ display: "none" }}
-                onChange={() => setQrSelected(true)}
-              />
-              <Group gap="xs">
-                <label htmlFor="qr-upload-edit" style={{ flex: 1 }}>
-                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                    💳 {listing.qrCode ? "Změnit QR kód" : "Nahrát QR kód platby"}
-                  </Button>
-                </label>
-                {(listing.qrCode || qrSelected) && (
-                  <Button color="red" variant="light" onClick={handleRemoveQr} style={{ flexShrink: 0 }}>
-                    🗑️
-                  </Button>
-                )}
-              </Group>
-              {listing.qrCode && !qrSelected && (
-                <Alert color="blue" variant="light">
-                  ✅ QR kód je nahrán.
-                </Alert>
-              )}
-              {qrSelected && (
-                <Alert color="green" variant="light">
-                  ✅ Nový QR kód byl vybrán.
-                </Alert>
-              )}
-            </Stack>
-
             <TextInput
               name="accountNumber"
-              label="Číslo účtu (volitelné)"
+              label="Číslo účtu pro platbu (volitelné)"
               defaultValue={listing.accountNumber ?? ""}
               placeholder="např. 123456789/0800"
             />
