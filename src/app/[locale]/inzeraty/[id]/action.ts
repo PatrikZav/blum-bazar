@@ -36,6 +36,10 @@ export async function updateListing(formData: FormData) {
   const imageUrl = formData.get("imageUrl") as string;
   const imageMode = formData.get("imageMode") as string;
   const accountNumber = formData.get("accountNumber") as string;
+  const locationCity = formData.get("locationCity") as string;
+  const locationLat = formData.get("locationLat") as string;
+  const locationLng = formData.get("locationLng") as string;
+  const locationRadius = formData.get("locationRadius") as string;
 
   if (!id || !title || !description || !category || !contact || !status) return;
 
@@ -63,6 +67,10 @@ export async function updateListing(formData: FormData) {
       contact,
       status,
       accountNumber: accountNumber || null,
+      locationCity: locationCity || null,
+      locationLat: locationLat || null,
+      locationLng: locationLng || null,
+      locationRadius: locationRadius ? Number(locationRadius) : null,
       ...(imagePath ? { image: imagePath } : {}),
     })
     .where(eq(listing.id, Number(id)));

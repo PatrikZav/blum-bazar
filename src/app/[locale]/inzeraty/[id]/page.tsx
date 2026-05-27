@@ -8,6 +8,7 @@ import { sendContactEmail } from "@/app/actions/contact";
 import { createReview, getSellerReviews, getSellerStats } from "@/app/actions/reviews";
 import { ContactModal } from "@/components/listings/ContactModal";
 import { EditListingModal } from "@/components/listings/EditListingModal";
+import { LocationMap } from "@/components/listings/LocationMap";
 import { PaymentModal } from "@/components/listings/PaymentModal";
 import { SellerProfile } from "@/components/listings/SellerProfile";
 import { db } from "@/db";
@@ -60,6 +61,8 @@ export default async function Page({ params }: Props) {
   }
 
   const canReview = !!session && !isOwner;
+
+  const hasLocation = !!(item.locationLat && item.locationLng);
 
   return (
     <Stack gap="lg" maw={900} mx="auto">
@@ -153,6 +156,15 @@ export default async function Page({ params }: Props) {
           </Stack>
         </Card>
       </Group>
+
+      {hasLocation && (
+        <LocationMap
+          city={item.locationCity || "Vybraná lokace"}
+          lat={Number(item.locationLat)}
+          lng={Number(item.locationLng)}
+          radius={item.locationRadius || 10}
+        />
+      )}
 
       {seller && (
         <SellerProfile

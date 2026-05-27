@@ -4,5 +4,6 @@
 @import "tailwindcss/preflight.css" layer(base);
 
 @import "@mantine/core/styles.layer.css";
+@import "leaflet/dist/leaflet.css";
 
 @import "tailwindcss/utilities.css" layer(utilities);
