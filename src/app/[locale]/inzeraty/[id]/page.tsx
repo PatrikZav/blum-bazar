@@ -13,7 +13,7 @@ import { SellerProfile } from "@/components/listings/SellerProfile";
 import { db } from "@/db";
 import { listing, user } from "@/db/schemas";
 import { getSession } from "@/lib/auth";
-import { deleteListing, removeListingImage, updateListing } from "./action";
+import { deleteListing, removeListingImage, updateListing, updateStatus } from "./action";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -127,10 +127,11 @@ export default async function Page({ params }: Props) {
               <Divider />
 
               <Group justify="space-between" align="center">
-                {!item.isFree && item.accountNumber && (
+                {!item.isFree && item.accountNumber && item.status === "Dostupné" && (
                   <PaymentModal
                     listing={item}
                     buyerName={session ? `${session.firstName} ${session.lastName}` : undefined}
+                    reserveListing={updateStatus}
                   />
                 )}
                 <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
