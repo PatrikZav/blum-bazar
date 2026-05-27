@@ -4,7 +4,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { sendContactEmail } from "@/app/actions/contact";
 import { createReview, getSellerReviews, getSellerStats } from "@/app/actions/reviews";
+import { ContactModal } from "@/components/listings/ContactModal";
 import { EditListingModal } from "@/components/listings/EditListingModal";
 import { PaymentModal } from "@/components/listings/PaymentModal";
 import { SellerProfile } from "@/components/listings/SellerProfile";
@@ -44,6 +46,7 @@ export default async function Page({ params }: Props) {
   const isOwner = session?.id === item.userId;
   const isAdmin = session?.role === "admin";
   const canEdit = isOwner || isAdmin;
+  const canContact = !!session && !isOwner;
 
   let seller = null;
   let sellerStats = { count: 0, avg: 0 };
@@ -102,36 +105,50 @@ export default async function Page({ params }: Props) {
 
             <Divider />
 
-            <Group justify="space-between" align="center">
+            <Stack gap="sm">
               <Stack gap={2}>
                 <Text size="sm" c="dimmed">
                   {t("page.listings.contact")}
                 </Text>
-                <Text fw={500}>{item.contact}</Text>
+                <Group justify="space-between" align="center">
+                  <Text fw={500}>{item.contact}</Text>
+                  {canContact && (
+                    <ContactModal
+                      toEmail={item.contact}
+                      listingTitle={item.title}
+                      fromName={session ? `${session.firstName} ${session.lastName}` : undefined}
+                      fromEmail={session?.email}
+                      sendContactEmail={sendContactEmail}
+                    />
+                  )}
+                </Group>
               </Stack>
-              <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
-                {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
-              </Text>
-            </Group>
+
+              <Divider />
+
+              <Group justify="space-between" align="center">
+                {!item.isFree && item.accountNumber && (
+                  <PaymentModal
+                    listing={item}
+                    buyerName={session ? `${session.firstName} ${session.lastName}` : undefined}
+                  />
+                )}
+                <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
+                  {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
+                </Text>
+              </Group>
+            </Stack>
 
             <Divider />
 
-            <Group>
-              {canEdit && (
-                <EditListingModal
-                  listing={item}
-                  updateListing={updateListing}
-                  deleteListing={deleteListing}
-                  removeListingImage={removeListingImage}
-                />
-              )}
-              {!item.isFree && item.accountNumber && (
-                <PaymentModal
-                  listing={item}
-                  buyerName={session ? `${session.firstName} ${session.lastName}` : undefined}
-                />
-              )}
-            </Group>
+            {canEdit && (
+              <EditListingModal
+                listing={item}
+                updateListing={updateListing}
+                deleteListing={deleteListing}
+                removeListingImage={removeListingImage}
+              />
+            )}
           </Stack>
         </Card>
       </Group>
