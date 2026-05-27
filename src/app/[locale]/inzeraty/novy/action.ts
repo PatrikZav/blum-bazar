@@ -17,6 +17,8 @@ export async function createListing(formData: FormData) {
   const category = formData.get("category") as string;
   const contact = formData.get("contact") as string;
   const imageFile = formData.get("image") as File | null;
+  const imageUrl = formData.get("imageUrl") as string;
+  const imageMode = formData.get("imageMode") as string;
   const accountNumber = formData.get("accountNumber") as string;
 
   if (!title || !description || !category || !contact) return;
@@ -24,7 +26,9 @@ export async function createListing(formData: FormData) {
 
   let imagePath: string | null = null;
 
-  if (imageFile && imageFile.size > 0) {
+  if (imageMode === "url" && imageUrl) {
+    imagePath = imageUrl;
+  } else if (imageFile && imageFile.size > 0) {
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const filename = `${Date.now()}-${imageFile.name.replace(/\s/g, "-")}`;
