@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useRef, useState } from "react";
 import type { Listing } from "@/db/schemas";
+import { LocationPicker } from "./LocationPicker";
 
 interface Props {
   listing: Listing;
@@ -182,6 +183,13 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
               label="Číslo účtu pro platbu (volitelné)"
               defaultValue={listing.accountNumber ?? ""}
               placeholder="např. 123456789/0800"
+            />
+
+            <LocationPicker
+              defaultCity={listing.locationCity}
+              defaultLat={listing.locationLat}
+              defaultLng={listing.locationLng}
+              defaultRadius={listing.locationRadius}
             />
 
             <Group justify="space-between">

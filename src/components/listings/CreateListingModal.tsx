@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { LocationPicker } from "./LocationPicker";
 
 interface Props {
   createListing: (formData: FormData) => Promise<void>;
@@ -161,6 +162,8 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               label="Číslo účtu pro platbu (volitelné)"
               placeholder="např. 123456789/0800"
             />
+
+            <LocationPicker />
 
             <Group justify="flex-end">
               <Button variant="subtle" onClick={close}>

@@ -12,6 +12,10 @@ export const listing = sqliteTable("listing", {
   contact: text().notNull(),
   image: text(),
   accountNumber: text(),
+  locationCity: text(),
+  locationLat: text(),
+  locationLng: text(),
+  locationRadius: int(),
   createdAt: int({ mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

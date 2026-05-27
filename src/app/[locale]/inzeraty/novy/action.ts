@@ -20,6 +20,10 @@ export async function createListing(formData: FormData) {
   const imageUrl = formData.get("imageUrl") as string;
   const imageMode = formData.get("imageMode") as string;
   const accountNumber = formData.get("accountNumber") as string;
+  const locationCity = formData.get("locationCity") as string;
+  const locationLat = formData.get("locationLat") as string;
+  const locationLng = formData.get("locationLng") as string;
+  const locationRadius = formData.get("locationRadius") as string;
 
   if (!title || !description || !category || !contact) return;
   if (!isFree && !price) return;
@@ -48,6 +52,10 @@ export async function createListing(formData: FormData) {
     status: "Dostupné",
     image: imagePath,
     accountNumber: accountNumber || null,
+    locationCity: locationCity || null,
+    locationLat: locationLat || null,
+    locationLng: locationLng || null,
+    locationRadius: locationRadius ? Number(locationRadius) : null,
   });
 
   redirect("/cs/inzeraty");
