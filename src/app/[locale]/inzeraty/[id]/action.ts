@@ -33,13 +33,17 @@ export async function updateListing(formData: FormData) {
   const contact = formData.get("contact") as string;
   const status = formData.get("status") as string;
   const imageFile = formData.get("image") as File | null;
+  const imageUrl = formData.get("imageUrl") as string;
+  const imageMode = formData.get("imageMode") as string;
   const accountNumber = formData.get("accountNumber") as string;
 
   if (!id || !title || !description || !category || !contact || !status) return;
 
   let imagePath: string | undefined;
 
-  if (imageFile && imageFile.size > 0) {
+  if (imageMode === "url" && imageUrl) {
+    imagePath = imageUrl;
+  } else if (imageFile && imageFile.size > 0) {
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const filename = `${Date.now()}-${imageFile.name.replace(/\s/g, "-")}`;

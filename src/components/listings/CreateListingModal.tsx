@@ -1,6 +1,18 @@
 "use client";
 
-import { Alert, Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  NumberInput,
+  SegmentedControl,
+  Select,
+  Stack,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +25,7 @@ interface Props {
 export function CreateListingModal({ createListing, userEmail }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
+  const [imageMode, setImageMode] = useState<"file" | "url">("file");
   const [isFree, setIsFree] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
@@ -27,6 +40,7 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
     await createListing(formData);
     close();
     setImageSelected(false);
+    setImageMode("file");
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -62,6 +76,7 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
         }}
       >
         <form action={handleSubmit}>
+          <input type="hidden" name="imageMode" value={imageMode} />
           <Stack gap="md">
             <TextInput name="title" label="Název věci" placeholder="např. Dětská židle" required />
 
@@ -92,32 +107,52 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               required
             />
 
-            <Stack gap={4}>
-              <input
-                ref={fileInputRef}
-                name="image"
-                type="file"
-                accept="image/*"
-                id="image-upload-create"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
+            <Stack gap="xs">
+              <SegmentedControl
+                value={imageMode}
+                onChange={(val) => {
+                  setImageMode(val as "file" | "url");
+                  setImageSelected(false);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                data={[
+                  { label: "Nahrát ze zařízení", value: "file" },
+                  { label: "Zadat URL", value: "url" },
+                ]}
+                fullWidth
               />
-              <Group gap="xs">
-                <label htmlFor="image-upload-create" style={{ flex: 1 }}>
-                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                    📷 Nahrát obrázek
-                  </Button>
-                </label>
-                {imageSelected && (
-                  <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
-                    🗑️
-                  </Button>
-                )}
-              </Group>
-              {imageSelected && (
-                <Alert color="green" variant="light">
-                  ✅ Obrázek byl vybrán.
-                </Alert>
+
+              {imageMode === "file" ? (
+                <Stack gap={4}>
+                  <input
+                    ref={fileInputRef}
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    id="image-upload-create"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <Group gap="xs">
+                    <label htmlFor="image-upload-create" style={{ flex: 1 }}>
+                      <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                        📷 Nahrát obrázek
+                      </Button>
+                    </label>
+                    {imageSelected && (
+                      <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
+                        🗑️
+                      </Button>
+                    )}
+                  </Group>
+                  {imageSelected && (
+                    <Alert color="green" variant="light">
+                      ✅ Obrázek byl vybrán.
+                    </Alert>
+                  )}
+                </Stack>
+              ) : (
+                <TextInput name="imageUrl" placeholder="https://example.com/obrazek.jpg" label="URL obrázku" />
               )}
             </Stack>
 

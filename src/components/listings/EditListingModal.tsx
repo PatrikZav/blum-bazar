@@ -1,6 +1,18 @@
 "use client";
 
-import { Alert, Button, Checkbox, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  NumberInput,
+  SegmentedControl,
+  Select,
+  Stack,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRef, useState } from "react";
 import type { Listing } from "@/db/schemas";
@@ -15,6 +27,7 @@ interface Props {
 export function EditListingModal({ listing, updateListing, deleteListing, removeListingImage }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [imageSelected, setImageSelected] = useState(false);
+  const [imageMode, setImageMode] = useState<"file" | "url">("file");
   const [isFree, setIsFree] = useState(listing.isFree);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +79,7 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
       >
         <form ref={formRef} action={handleSubmit}>
           <input type="hidden" name="id" value={listing.id} />
+          <input type="hidden" name="imageMode" value={imageMode} />
           <Stack gap="md">
             <TextInput name="title" label="Název věci" defaultValue={listing.title} required />
 
@@ -104,37 +118,62 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
 
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
 
-            <Stack gap={4}>
-              <input
-                ref={fileInputRef}
-                name="image"
-                type="file"
-                accept="image/*"
-                id="image-upload-edit"
-                style={{ display: "none" }}
-                onChange={() => setImageSelected(true)}
+            <Stack gap="xs">
+              <SegmentedControl
+                value={imageMode}
+                onChange={(val) => {
+                  setImageMode(val as "file" | "url");
+                  setImageSelected(false);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                data={[
+                  { label: "Nahrát ze zařízení", value: "file" },
+                  { label: "Zadat URL", value: "url" },
+                ]}
+                fullWidth
               />
-              <Group gap="xs">
-                <label htmlFor="image-upload-edit" style={{ flex: 1 }}>
-                  <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
-                    📷 {listing.image ? "Změnit obrázek" : "Nahrát obrázek"}
-                  </Button>
-                </label>
-                {(listing.image || imageSelected) && (
-                  <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
-                    🗑️
-                  </Button>
-                )}
-              </Group>
-              {listing.image && !imageSelected && (
-                <Alert color="blue" variant="light">
-                  ✅ Obrázek je nahrán.
-                </Alert>
-              )}
-              {imageSelected && (
-                <Alert color="green" variant="light">
-                  ✅ Nový obrázek byl vybrán.
-                </Alert>
+
+              {imageMode === "file" ? (
+                <Stack gap={4}>
+                  <input
+                    ref={fileInputRef}
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    id="image-upload-edit"
+                    style={{ display: "none" }}
+                    onChange={() => setImageSelected(true)}
+                  />
+                  <Group gap="xs">
+                    <label htmlFor="image-upload-edit" style={{ flex: 1 }}>
+                      <Button component="span" variant="light" fullWidth style={{ cursor: "pointer" }}>
+                        📷 {listing.image ? "Změnit obrázek" : "Nahrát obrázek"}
+                      </Button>
+                    </label>
+                    {(listing.image || imageSelected) && (
+                      <Button color="red" variant="light" onClick={handleRemoveImage} style={{ flexShrink: 0 }}>
+                        🗑️
+                      </Button>
+                    )}
+                  </Group>
+                  {listing.image && !imageSelected && (
+                    <Alert color="blue" variant="light">
+                      ✅ Obrázek je nahrán.
+                    </Alert>
+                  )}
+                  {imageSelected && (
+                    <Alert color="green" variant="light">
+                      ✅ Nový obrázek byl vybrán.
+                    </Alert>
+                  )}
+                </Stack>
+              ) : (
+                <TextInput
+                  name="imageUrl"
+                  placeholder="https://example.com/obrazek.jpg"
+                  label="URL obrázku"
+                  defaultValue={listing.image?.startsWith("http") ? listing.image : ""}
+                />
               )}
             </Stack>
 
