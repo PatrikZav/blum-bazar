@@ -9,6 +9,7 @@ import type { Listing } from "@/db/schemas";
 interface Props {
   listing: Listing;
   buyerName?: string;
+  reserveListing: (formData: FormData) => Promise<void>;
 }
 
 function accountToIban(accountNumber: string): string | null {
@@ -24,9 +25,10 @@ function accountToIban(accountNumber: string): string | null {
   return `CZ${checkDigits}${bban}`;
 }
 
-export function PaymentModal({ listing, buyerName }: Props) {
+export function PaymentModal({ listing, buyerName, reserveListing }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [reserved, setReserved] = useState(false);
 
   useEffect(() => {
     if (!opened || !listing.accountNumber) return;
@@ -47,6 +49,15 @@ export function PaymentModal({ listing, buyerName }: Props) {
 
     QRCode.toDataURL(spdString, { width: 300, margin: 2 }).then(setQrDataUrl).catch(console.error);
   }, [opened, listing, buyerName]);
+
+  async function handleReserve() {
+    const formData = new FormData();
+    formData.append("id", String(listing.id));
+    formData.append("status", "Rezervováno");
+    await reserveListing(formData);
+    setReserved(true);
+    close();
+  }
 
   return (
     <>
@@ -100,6 +111,12 @@ export function PaymentModal({ listing, buyerName }: Props) {
             ⚠️ Zpráva pro příjemce: {buyerName ? `${buyerName} - ` : ""}
             {listing.title}
           </Text>
+
+          <Divider w="100%" />
+
+          <Button variant="light" color="yellow" fullWidth onClick={handleReserve} disabled={reserved}>
+            {reserved ? "Rezervováno" : "Rezervovat inzerát"}
+          </Button>
         </Stack>
       </Modal>
     </>
