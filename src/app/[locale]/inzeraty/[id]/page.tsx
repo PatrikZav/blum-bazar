@@ -52,16 +52,20 @@ export default async function Page({ params }: Props) {
   let seller = null;
   let sellerStats = { count: 0, avg: 0 };
   let reviews: Awaited<ReturnType<typeof getSellerReviews>> = [];
+  let otherListings: Array<typeof item> = [];
 
   if (item.userId) {
     const sellerResult = await db.select().from(user).where(eq(user.id, item.userId));
     seller = sellerResult[0] ?? null;
     sellerStats = await getSellerStats(item.userId);
     reviews = await getSellerReviews(item.userId);
+
+    const allSellerListings = await db.select().from(listing).where(eq(listing.userId, item.userId));
+
+    otherListings = allSellerListings.filter((l) => l.id !== item.id && l.status !== "Prodáno / předáno");
   }
 
   const canReview = !!session && !isOwner;
-
   const hasLocation = !!(item.locationLat && item.locationLng);
 
   return (
@@ -176,6 +180,7 @@ export default async function Page({ params }: Props) {
           canReview={canReview}
           createReview={createReview}
           reviews={reviews}
+          otherListings={otherListings}
         />
       )}
     </Stack>

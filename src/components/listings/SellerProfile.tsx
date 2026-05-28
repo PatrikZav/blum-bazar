@@ -1,6 +1,17 @@
-import { Avatar, Badge, Card, Divider, Group, Stack, Text } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Divider, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import Link from "next/link";
 import type { createReview, getSellerReviews } from "@/app/actions/reviews";
 import { ReviewModal } from "@/components/listings/ReviewModal";
+
+interface OtherListing {
+  id: number;
+  title: string;
+  price: number | null;
+  isFree: boolean;
+  category: string;
+  status: string;
+  image: string | null;
+}
 
 interface Props {
   seller: {
@@ -15,6 +26,7 @@ interface Props {
   canReview: boolean;
   createReview: typeof createReview;
   reviews: Awaited<ReturnType<typeof getSellerReviews>>;
+  otherListings: OtherListing[];
 }
 
 export function SellerProfile({
@@ -26,6 +38,7 @@ export function SellerProfile({
   canReview,
   createReview,
   reviews,
+  otherListings,
 }: Props) {
   const initials = `${seller.firstName.charAt(0)}${seller.lastName.charAt(0)}`;
 
@@ -119,6 +132,39 @@ export function SellerProfile({
                 </Card>
               ))}
             </Stack>
+          </>
+        )}
+
+        {otherListings.length > 0 && (
+          <>
+            <Divider />
+            <Text fw={600} size="sm">
+              Další inzeráty od {seller.firstName} {seller.lastName}
+            </Text>
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm">
+              {otherListings.map((l) => (
+                <Card key={l.id} padding="sm" radius="md" withBorder>
+                  <Stack gap="xs">
+                    <Text fw={500} size="sm" lineClamp={1}>
+                      {l.title}
+                    </Text>
+                    <Group justify="space-between" align="center">
+                      <Badge variant="light" color="blue" size="xs">
+                        {l.category}
+                      </Badge>
+                      <Text fw={700} size="sm" c={l.isFree ? "green" : undefined}>
+                        {l.isFree ? "Zdarma" : `${l.price} Kč`}
+                      </Text>
+                    </Group>
+                    <Link href={`/cs/inzeraty/${l.id}`}>
+                      <Button variant="light" size="xs" fullWidth>
+                        Zobrazit
+                      </Button>
+                    </Link>
+                  </Stack>
+                </Card>
+              ))}
+            </SimpleGrid>
           </>
         )}
       </Stack>
