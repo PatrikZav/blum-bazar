@@ -3,7 +3,7 @@
 import { Alert, Autocomplete, Button, Group, Loader, Slider, Stack, Text, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MapPreview = dynamic(() => import("./LocationMapInner"), {
   ssr: false,
@@ -85,6 +85,9 @@ export function LocationPicker({ defaultCity, defaultLat, defaultLng, defaultRad
   const [error, setError] = useState("");
   const [found, setFound] = useState(!!(defaultLat && defaultLng));
 
+  // Ref to prevent onChange from resetting found after onOptionSubmit
+  const justSelected = useRef(false);
+
   useEffect(() => {
     if (debouncedSearch.trim().length < 3) {
       setOptions([]);
@@ -134,6 +137,7 @@ export function LocationPicker({ defaultCity, defaultLat, defaultLng, defaultRad
   function handleOptionSubmit(val: string) {
     const selected = options.find((o) => o.value === val);
     if (selected) {
+      justSelected.current = true;
       setCity(selected.value);
       setSearchValue(selected.value);
       setLat(selected.lat);
@@ -198,6 +202,10 @@ export function LocationPicker({ defaultCity, defaultLat, defaultLng, defaultRad
         <Autocomplete
           value={searchValue}
           onChange={(val) => {
+            if (justSelected.current) {
+              justSelected.current = false;
+              return;
+            }
             setSearchValue(val);
             setFound(false);
           }}

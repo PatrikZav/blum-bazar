@@ -28,6 +28,8 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
   const [imageSelected, setImageSelected] = useState(false);
   const [imageMode, setImageMode] = useState<"file" | "url">("file");
   const [isFree, setIsFree] = useState(false);
+  const [price, setPrice] = useState<string | number>("");
+  const [accountNumber, setAccountNumber] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
 
@@ -91,13 +93,29 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
             />
 
-            <NumberInput name="price" label="Cena (Kč)" placeholder="např. 500" min={0} required={!isFree} />
+            <NumberInput
+              name="price"
+              label="Cena (Kč)"
+              placeholder="např. 500"
+              min={0}
+              required={!isFree}
+              value={price}
+              onChange={(val) => setPrice(val)}
+              disabled={isFree}
+            />
 
             <Checkbox
               name="isFree"
               label="Nabízím zdarma"
               checked={isFree}
-              onChange={(e) => setIsFree(e.currentTarget.checked)}
+              onChange={(e) => {
+                const checked = e.currentTarget.checked;
+                setIsFree(checked);
+                if (checked) {
+                  setPrice("");
+                  setAccountNumber("");
+                }
+              }}
             />
 
             <TextInput
@@ -161,6 +179,9 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               name="accountNumber"
               label="Číslo účtu pro platbu (volitelné)"
               placeholder="např. 123456789/0800"
+              value={accountNumber}
+              onChange={(e) => setAccountNumber(e.currentTarget.value)}
+              disabled={isFree}
             />
 
             <LocationPicker />

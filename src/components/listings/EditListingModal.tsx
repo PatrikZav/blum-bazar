@@ -30,6 +30,8 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
   const [imageSelected, setImageSelected] = useState(false);
   const [imageMode, setImageMode] = useState<"file" | "url">("file");
   const [isFree, setIsFree] = useState(listing.isFree);
+  const [price, setPrice] = useState<string | number>(listing.price ?? "");
+  const [accountNumber, setAccountNumber] = useState(listing.accountNumber ?? "");
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -105,16 +107,25 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
             <NumberInput
               name="price"
               label="Cena (Kč)"
-              defaultValue={listing.price ?? undefined}
               min={0}
               required={!isFree}
+              value={price}
+              onChange={(val) => setPrice(val)}
+              disabled={isFree}
             />
 
             <Checkbox
               name="isFree"
               label="Nabízím zdarma"
               checked={isFree}
-              onChange={(e) => setIsFree(e.currentTarget.checked)}
+              onChange={(e) => {
+                const checked = e.currentTarget.checked;
+                setIsFree(checked);
+                if (checked) {
+                  setPrice("");
+                  setAccountNumber("");
+                }
+              }}
             />
 
             <TextInput name="contact" label="Kontakt (e-mail)" defaultValue={listing.contact} required />
@@ -181,8 +192,10 @@ export function EditListingModal({ listing, updateListing, deleteListing, remove
             <TextInput
               name="accountNumber"
               label="Číslo účtu pro platbu (volitelné)"
-              defaultValue={listing.accountNumber ?? ""}
               placeholder="např. 123456789/0800"
+              value={accountNumber}
+              onChange={(e) => setAccountNumber(e.currentTarget.value)}
+              disabled={isFree}
             />
 
             <LocationPicker
