@@ -47,7 +47,7 @@ export default async function Page({ params }: Props) {
   const isOwner = session?.id === item.userId;
   const isAdmin = session?.role === "admin";
   const canEdit = isOwner || isAdmin;
-  const canContact = !!session && !isOwner;
+  const canContact = !isOwner;
 
   let seller = null;
   let sellerStats = { count: 0, avg: 0 };
@@ -134,13 +134,24 @@ export default async function Page({ params }: Props) {
               <Divider />
 
               <Group justify="space-between" align="center">
-                {!item.isFree && item.accountNumber && item.status === "Dostupné" && (
-                  <PaymentModal
-                    listing={item}
-                    buyerName={session ? `${session.firstName} ${session.lastName}` : undefined}
-                    reserveListing={updateStatus}
-                  />
-                )}
+                {!item.isFree &&
+                  item.accountNumber &&
+                  item.status === "Dostupné" &&
+                  (session ? (
+                    <PaymentModal
+                      listing={item}
+                      buyerName={`${session.firstName} ${session.lastName}`}
+                      reserveListing={updateStatus}
+                    />
+                  ) : (
+                    <Text size="sm" c="dimmed">
+                      Pro platbu se prosím{" "}
+                      <Link href="/cs/inzeraty" style={{ color: "var(--mantine-color-orange-6)" }}>
+                        přihlaste
+                      </Link>
+                      .
+                    </Text>
+                  ))}
                 <Text fw={700} size="xl" c={item.isFree ? "green" : undefined}>
                   {item.isFree ? t("page.listings.free") : `${item.price} Kč`}
                 </Text>
