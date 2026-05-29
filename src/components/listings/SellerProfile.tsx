@@ -1,3 +1,4 @@
+// Kartička s informacemi o prodejci, jeho hodnocením a seznamem jeho dalších inzerátů.
 import { Avatar, Badge, Button, Card, Divider, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import Link from "next/link";
 import type { createReview, getSellerReviews } from "@/app/actions/reviews";

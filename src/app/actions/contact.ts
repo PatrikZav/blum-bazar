@@ -1,3 +1,4 @@
+// Zde se řeší odesílání e-mailů, když chce někdo kontaktovat prodejce inzerátu.
 "use server";
 
 import { Resend } from "resend";

@@ -1,3 +1,4 @@
+// Tento soubor se stará o přidávání a odebírání inzerátů do oblíbených.
 "use server";
 
 import { and, eq } from "drizzle-orm";

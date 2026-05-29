@@ -1,3 +1,4 @@
+// Vnitřní část mapy, která zařizuje samotné zobrazení mapových podkladů a barevného kruhu.
 "use client";
 
 import "leaflet/dist/leaflet.css";

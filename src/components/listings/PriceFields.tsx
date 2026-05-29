@@ -1,3 +1,4 @@
+// Komponenta pro zadávání ceny, která umí cenu zablokovat, pokud se věc nabízí zdarma.
 "use client";
 
 import { Checkbox, NumberInput } from "@mantine/core";

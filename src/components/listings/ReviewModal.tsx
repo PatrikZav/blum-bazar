@@ -1,3 +1,4 @@
+// Vyskakovací okno, ve kterém může uživatel napsat a odeslat hodnocení na jiného prodejce.
 "use client";
 
 import { Alert, Button, Group, Modal, Stack, Text, Textarea, TextInput } from "@mantine/core";

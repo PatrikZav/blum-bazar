@@ -1,3 +1,4 @@
+// Tento soubor slouží k načítání systémového nastavení (například upozornění na údržbu).
 import { inArray } from "drizzle-orm";
 
 import { db } from "@/db";

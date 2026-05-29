@@ -1,3 +1,4 @@
+// Stránka s detailem jednoho konkrétního inzerátu, kde jsou všechny informace.
 import { Badge, Button, Card, Divider, Group, Image, Stack, Text, Title } from "@mantine/core";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";

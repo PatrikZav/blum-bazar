@@ -1,3 +1,4 @@
+// Vyskakovací okno, které ukazuje pokyny k platbě na účet a umožňuje inzerát rezervovat.
 "use client";
 
 import { Button, Divider, Modal, Stack, Text, Title } from "@mantine/core";

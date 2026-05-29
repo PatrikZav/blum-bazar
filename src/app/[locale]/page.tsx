@@ -1,5 +1,4 @@
-/* Domovská stránka */
-
+// Hlavní domovská stránka, kde uživatel vidí uvítání a výběr kategorií.
 import { Button, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";

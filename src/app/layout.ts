@@ -1,3 +1,4 @@
+// Hlavní rozvržení celé aplikace, které se stará o základní nastavení.
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";

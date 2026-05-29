@@ -1,3 +1,4 @@
+// Vyskakovací okno pro administrátora, kde vidí všechny uživatele a může je spravovat.
 "use client";
 
 import {

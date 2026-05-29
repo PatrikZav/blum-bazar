@@ -1,3 +1,4 @@
+// Základní kostra stránky, která obsahuje hlavičku, hlavní obsah a případně patičku.
 import type { PropsWithChildren } from "react";
 import { changePassword, deleteAccount } from "@/app/actions/account";
 import { adminChangePassword, adminChangeRole, adminDeleteUser, getAllUsers } from "@/app/actions/admin";

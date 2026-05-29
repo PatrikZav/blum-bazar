@@ -1,3 +1,4 @@
+// Vyskakovací okno s formulářem, ve kterém uživatel zadává informace pro nový inzerát.
 "use client";
 
 import {

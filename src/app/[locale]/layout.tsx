@@ -1,3 +1,4 @@
+// Rozvržení stránky pro konkrétní jazyk, které nastavuje vzhled a překlady.
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { notFound } from "next/navigation";

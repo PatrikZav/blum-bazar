@@ -1,3 +1,4 @@
+// Vyskakovací okno s formulářem pro přihlášení nebo registraci nového uživatele.
 "use client";
 
 import { Alert, Button, Divider, Modal, PasswordInput, Stack, Text, TextInput } from "@mantine/core";

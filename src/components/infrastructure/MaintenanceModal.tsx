@@ -1,3 +1,4 @@
+// Vyskakovací okno, které se ukáže všem uživatelům, když na webu probíhá údržba.
 "use client";
 
 import { Loader, Modal, noop, Stack, Text, Title } from "@mantine/core";

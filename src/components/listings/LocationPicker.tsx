@@ -1,3 +1,4 @@
+// Nástroj, pomocí kterého může uživatel vyhledat a nastavit přibližnou polohu inzerátu.
 "use client";
 
 import { Alert, Autocomplete, Button, Group, Loader, Slider, Stack, Text, TextInput } from "@mantine/core";

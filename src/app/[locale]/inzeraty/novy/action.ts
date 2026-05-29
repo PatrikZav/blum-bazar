@@ -1,4 +1,4 @@
-/*Uloží inzeráty do databáze*/
+// Tento soubor se stará o uložení nově vytvořeného inzerátu do databáze.
 "use server";
 
 import { writeFile } from "node:fs/promises";

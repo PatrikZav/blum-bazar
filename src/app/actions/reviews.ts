@@ -1,3 +1,4 @@
+// Zde se řeší ukládání, upravování a mazání hodnocení mezi uživateli.
 "use server";
 
 import { and, eq } from "drizzle-orm";

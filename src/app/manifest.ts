@@ -1,3 +1,4 @@
+// Tento soubor generuje informace o aplikaci pro prohlížeče a mobily (tzv. manifest).
 import type { MetadataRoute } from "next";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";

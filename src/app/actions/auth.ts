@@ -1,3 +1,4 @@
+// Tento soubor má na starosti přihlašování, registraci a odhlašování uživatelů.
 "use server";
 
 import bcrypt from "bcryptjs";

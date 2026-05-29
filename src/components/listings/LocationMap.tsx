@@ -1,3 +1,4 @@
+// Komponenta, která zobrazuje mapu s vyznačenou oblastí u inzerátu.
 "use client";
 
 import { Card, Stack, Text } from "@mantine/core";

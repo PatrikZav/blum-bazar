@@ -1,3 +1,4 @@
+// Menu v horní liště, kde má přihlášený uživatel přístup ke svému profilu a nastavení.
 "use client";
 
 import { Alert, Button, Divider, Group, Menu, Modal, PasswordInput, Stack, Text } from "@mantine/core";

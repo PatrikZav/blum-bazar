@@ -1,4 +1,4 @@
-/*Změní stav inzerátu a uloží do databáze*/
+// Tento soubor se stará o úpravu, mazání a změnu stavu existujícího inzerátu v databázi.
 "use server";
 
 import { unlink, writeFile } from "node:fs/promises";

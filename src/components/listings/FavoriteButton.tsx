@@ -1,3 +1,4 @@
+// Tlačítko ve tvaru srdíčka, kterým si uživatel ukládá inzerát do oblíbených.
 "use client";
 
 import { ActionIcon } from "@mantine/core";

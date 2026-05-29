@@ -1,3 +1,4 @@
+// Zde jsou funkce pro administrátora, například pro správu uživatelů a jejich rolí.
 "use server";
 
 import bcrypt from "bcryptjs";

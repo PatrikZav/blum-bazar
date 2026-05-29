@@ -1,3 +1,4 @@
+// Vyskakovací okno s formulářem, ve kterém může majitel inzerátu upravit jeho informace.
 "use client";
 
 import {

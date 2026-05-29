@@ -1,3 +1,4 @@
+// Komponenta, která zobrazuje logo aplikace a slouží jako odkaz na domovskou stránku.
 "use client";
 
 import Image from "next/image";

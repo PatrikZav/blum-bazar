@@ -1,3 +1,4 @@
+// Tento soubor zajišťuje změnu hesla a smazání uživatelského účtu.
 "use server";
 
 import bcrypt from "bcryptjs";

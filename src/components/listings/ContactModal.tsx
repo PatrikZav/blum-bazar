@@ -1,3 +1,4 @@
+// Vyskakovací okno, přes které může zájemce poslat zprávu majiteli inzerátu.
 "use client";
 
 import { Alert, Button, Group, Modal, Stack, Text, Textarea, TextInput } from "@mantine/core";

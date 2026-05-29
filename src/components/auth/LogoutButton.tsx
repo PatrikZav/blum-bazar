@@ -1,3 +1,4 @@
+// Tlačítko, kterým se uživatel odhlásí ze svého účtu.
 "use client";
 
 import { Button } from "@mantine/core";

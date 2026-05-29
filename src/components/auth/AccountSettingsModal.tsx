@@ -1,3 +1,4 @@
+// Vyskakovací okno, kde si uživatel může změnit heslo nebo smazat svůj účet.
 "use client";
 
 import { Alert, Button, Divider, Group, Menu, Modal, PasswordInput, Stack, Text } from "@mantine/core";

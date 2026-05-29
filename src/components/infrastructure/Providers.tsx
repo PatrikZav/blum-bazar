@@ -1,3 +1,4 @@
+// Tento soubor obaluje celou aplikaci nástroji pro načítání dat a kontrolu stavu.
 "use client";
 
 import { environmentManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";

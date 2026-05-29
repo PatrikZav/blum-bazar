@@ -1,4 +1,4 @@
-/* Stránka se všemi inzeráty */
+// Stránka, která zobrazuje seznam všech inzerátů a umožňuje v nich vyhledávat.
 import { Badge, Button, Card, Group, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
 import { and, eq, inArray, like, or } from "drizzle-orm";
 import type { Metadata } from "next";

@@ -1,3 +1,4 @@
+// Vyskakovací okno, které zobrazuje všechna hodnocení, která uživatel dostal nebo napsal.
 "use client";
 
 import {

@@ -1,3 +1,4 @@
+// Tento soubor se stará o vykreslení hlavičky a navigace pro přihlášené i nepřihlášené uživatele.
 "use client";
 
 import { AppShell, Container, Group } from "@mantine/core";

@@ -1,3 +1,4 @@
+// Klikací karta pro výběr kategorie inzerátů, která se ukazuje na hlavní stránce.
 "use client";
 
 import Link from "next/link";
