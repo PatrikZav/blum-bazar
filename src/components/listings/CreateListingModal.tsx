@@ -183,6 +183,8 @@ export function CreateListingModal({ createListing, userEmail }: Props) {
               value={accountNumber}
               onChange={(e) => setAccountNumber(e.currentTarget.value)}
               disabled={isFree}
+              pattern="^([0-9]{1,6}-)?[0-9]{2,10}/[0-9]{4}$"
+              title="Zadejte platné číslo účtu ve formátu 123456789/0800 (případně i s předčíslím)"
             />
 
             <LocationPicker />
