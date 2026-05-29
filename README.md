@@ -10,14 +10,38 @@ Interní bazarová aplikace pro zaměstnance firmy Blogic. Umožňuje nabízet v
 ### Přehled inzerátů
 ![Přehled inzerátů](docs/assets/screens/listings.png)
 
+### Vytvoření inzerátu
+![Vytvoření inzerátu](docs/assets/screens/novy-inzerat.png)
+
 ### Detail inzerátu
 ![Detail inzerátu](docs/assets/screens/detail.png)
 
 ### Platba přes QR kód
 ![QR platba](docs/assets/screens/payment.png)
 
+### Kontaktní formulář
+![Kontaktní formulář](docs/assets/screens/kontaktni-formular.png)
+
+### Zanechání recenze
+![Zanechání recenze](docs/assets/screens/zanechani-recenze.png)
+
+### Zobrazení mých recenzí
+![Zobrazení mých recenzí](docs/assets/screens/moje-recenze.png)
+
+### Zobrazení obdržených recenzí
+![Zobrazení obdržených recenzí](docs/assets/screens/obdrzene-recenze.png)
+
+### Registrace
+![Registrace](docs/assets/screens/registrace.png)
+
 ### Přihlášení
 ![Přihlášení](docs/assets/screens/login.png)
+
+### Nastavení účtu
+![Nastavení účtu](docs/assets/screens/nastaveni-uctu.png)
+
+### Admin rozhraní - správa uživatelů
+![Admin rozhraní - správa uživatelů](docs/assets/screens/sprava-uzivatelu.png)
 
 ## Funkce
 
