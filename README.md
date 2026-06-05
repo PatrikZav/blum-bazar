@@ -84,8 +84,7 @@ Interní bazarová aplikace pro zaměstnance firmy Blogic. Umožňuje nabízet v
 
 ```powershell
 # Naklonuj repozitář
-git clone https://github.com/PatrikZav/blum-bazar.git
-cd blum-bazar
+stáhnout projekt z githubu
 
 # Nainstaluj závislosti
 npm install
@@ -94,6 +93,7 @@ npm install
 # RESEND_API_KEY=tvůj_klíč
 
 # Připrav databázi
+npm run db:generate
 npm run db:migrate
 
 # Vlož ukázková data
