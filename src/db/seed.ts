@@ -1,14 +1,71 @@
-/* Vytvořil jsem ukázkové inzeráty */
+import bcrypt from "bcryptjs";
 import { db } from "./index";
-import { listing } from "./schemas";
+import { favorite, listing, review, user } from "./schemas";
 
-await db.insert(listing).values([
-  // ======================
-  // 🪑 NÁBYTEK
-  // Patrik + Petr
-  // ======================
-
+// Uživatelé
+await db.insert(user).values([
   {
+    id: 2,
+    firstName: "Patrik",
+    lastName: "Zavadil",
+    email: "patazavadil@seznam.cz",
+    password: "$2b$10$2i6CcNwRw.LUukvjLB/m1O66Zd/2YSImoaO5mlyYfYbDtizB.FAbK",
+    role: "user",
+  },
+  {
+    id: 4,
+    firstName: "Blogic",
+    lastName: "Admin",
+    email: "admin@blogic.cz",
+    password: "$2b$10$qc/mYjetbeQ6PIt0yZc.R.sNS8hBN.yTh.TdbQAsNWm4KDrmHCu36",
+    role: "admin",
+  },
+  {
+    id: 7,
+    firstName: "Petr",
+    lastName: "Svoboda",
+    email: "petr.svoboda@blogic.cz",
+    password: "$2b$10$vCEbRRV/nAkRRwYO7zNnGOQLw3CtJN1lKKHgnbVlu39YgMbKqRQ4e",
+    role: "user",
+  },
+  {
+    id: 8,
+    firstName: "Lucie",
+    lastName: "Dvořáková",
+    email: "lucie.dvorakova@blogic.cz",
+    password: "$2b$10$H/JQhvqZRTbbOqIQKO0/IuU1iHEZE1r59GY3ymS0kPqWb2Ly3zPEy",
+    role: "user",
+  },
+  {
+    id: 9,
+    firstName: "Tereza",
+    lastName: "Malá",
+    email: "tereza.mala@blogic.cz",
+    password: "$2b$10$KJX/SemFD3HCR7GB/PoViu2zf3XRKHedl2L.6drNTqnKKriVNmGnG",
+    role: "user",
+  },
+  {
+    id: 10,
+    firstName: "David",
+    lastName: "Procházka",
+    email: "david.prochazka@blogic.cz",
+    password: "$2b$10$OIhWadQl8bi0yuboiR8C0eo75frqaNAiZSHQJvPkuiYTJ11k4z.B2",
+    role: "user",
+  },
+  {
+    id: 11,
+    firstName: "Martin",
+    lastName: "Král",
+    email: "martin.kral@blogic.cz",
+    password: "$2b$10$uVsP7Sy7m5M9E9Dr/GKrGebv6Ngxq4VGkq/Isqk4IEbxlcmuhk0sy",
+    role: "user",
+  },
+]);
+
+// Inzeráty
+await db.insert(listing).values([
+  {
+    id: 22,
     title: "Kancelářská židle ErgoFlex",
     description: "Ergonomická kancelářská židle s nastavitelnou výškou a opěrkou zad.",
     price: 900,
@@ -16,25 +73,34 @@ await db.insert(listing).values([
     category: "Nábytek",
     status: "Dostupné",
     contact: "patazavadil@seznam.cz",
+    image:
+      "https://www.kancelarskezidle.com/images/shop/products/1049761/thumb_rectangle/kancelarska_balancni_zidle_reflex_balance_xl_airsoft.jpg?v=2",
+    accountNumber: "291411116/0300",
     userId: 2,
+    locationCity: "Nad Stráněmi, Zlín, 760 05",
+    locationLat: "49.2310876",
+    locationLng: "17.6576245",
+    locationRadius: 2,
   },
   {
+    id: 23,
     title: "Dřevěný jídelní stůl",
     description: "Masivní jídelní stůl pro 4 osoby, stabilní konstrukce.",
     price: 3000,
     isFree: false,
     category: "Nábytek",
-    status: "Dostupné",
+    status: "Rezervováno",
     contact: "petr.svoboda@blogic.cz",
+    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
+    accountNumber: "291411116/0300",
     userId: 7,
+    locationCity: "Kroměříž, 767 01",
+    locationLat: "49.3017665",
+    locationLng: "17.3906487",
+    locationRadius: 4,
   },
-
-  // ======================
-  // 🧸 DĚTSKÉ VĚCI
-  // Lucie + Tereza
-  // ======================
-
   {
+    id: 24,
     title: "Dětská autosedačka",
     description: "Autosedačka 0–18 kg, po jednom dítěti, čistá a nebouraná.",
     price: 800,
@@ -42,25 +108,33 @@ await db.insert(listing).values([
     category: "Dětské věci",
     status: "Dostupné",
     contact: "lucie.dvorakova@blogic.cz",
+    image: "https://cdn.alza.cz/Foto/ImgGalery/Image/Article/autosedacky1.jpg",
+    accountNumber: "291411116/0300",
     userId: 8,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
   {
+    id: 25,
     title: "Sportovní kočárek",
     description: "Lehký kočárek vhodný na cestování, snadno složitelný.",
     price: 1200,
     isFree: false,
     category: "Dětské věci",
-    status: "Dostupné",
+    status: "Prodáno / předáno",
     contact: "tereza.mala@blogic.cz",
+    image: "https://www.detskyruzek.cz/data/product/1024_768/0_206.jpg",
+    accountNumber: "291411116/0300",
     userId: 9,
+    locationCity: "Praha 6, Prague",
+    locationLat: "50.1065562",
+    locationLng: "14.3637235",
+    locationRadius: 3,
   },
-
-  // ======================
-  // 👕 OBLEČENÍ
-  // David + Martin
-  // ======================
-
   {
+    id: 26,
     title: "Zimní bunda Nike",
     description: "Teplá zimní bunda, dobrý stav, lehce nošená.",
     price: 700,
@@ -68,9 +142,16 @@ await db.insert(listing).values([
     category: "Oblečení",
     status: "Dostupné",
     contact: "david.prochazka@blogic.cz",
+    image: "https://www.kridlamody.cz/fotky80246/fotos/_vyr_1003_AC7DC2B5-131F-45C0-AD2F-2B2BF81FA1D5.webp",
+    accountNumber: "291411116/0300",
     userId: 10,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
   {
+    id: 27,
     title: "Tenisky Adidas",
     description: "Sportovní boty, lehce nošené, stále pohodlné.",
     price: 500,
@@ -78,15 +159,16 @@ await db.insert(listing).values([
     category: "Oblečení",
     status: "Dostupné",
     contact: "martin.kral@blogic.cz",
+    image: "https://img2.ans-media.com/i/430x645/AW25-OBK0K9-99X_F1.webp?v=1759299771",
+    accountNumber: "291411116/0300",
     userId: 11,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
-
-  // ======================
-  // 💻 ELEKTRONIKA
-  // Patrik + Petr
-  // ======================
-
   {
+    id: 28,
     title: "Notebook HP",
     description: "Funkční notebook vhodný na školu i práci.",
     price: 2500,
@@ -94,9 +176,16 @@ await db.insert(listing).values([
     category: "Elektronika",
     status: "Dostupné",
     contact: "patazavadil@seznam.cz",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJDhjYpEOG5nhRoxm9VA5adKNOSmnsDnXQmg&s",
+    accountNumber: "291411116/0300",
     userId: 2,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
   {
+    id: 29,
     title: 'Starší monitor 24"',
     description: "Dell monitor 24 palců, Full HD, HDMI + VGA. Plně funkční.",
     price: 800,
@@ -104,25 +193,34 @@ await db.insert(listing).values([
     category: "Elektronika",
     status: "Dostupné",
     contact: "petr.svoboda@blogic.cz",
+    image: "https://www.bazos.cz/img/1/388/218959388.jpg",
+    accountNumber: "291411116/0300",
     userId: 7,
+    locationCity: "Nad Stráněmi, Zlín, 760 05",
+    locationLat: "49.2310876",
+    locationLng: "17.6576245",
+    locationRadius: 2,
   },
-
-  // ======================
-  // 📚 KNIHY
-  // Lucie + Tereza
-  // ======================
-
   {
+    id: 30,
     title: "Harry Potter série",
     description: "Kompletní knižní série v dobrém stavu.",
-    price: 800,
-    isFree: false,
+    price: null,
+    isFree: true,
     category: "Knihy",
     status: "Dostupné",
     contact: "lucie.dvorakova@blogic.cz",
+    image:
+      "https://www.antikavion.cz/storage/images/webp/harry-potter-1-7-kompletni-serie-harry-potter-a-kamen-mudrcu-tajemna-komnata-vezen-z-azkabanu-ohnivy-pohar-fenixuv-rad-princ-dvoji-krve-relikvie-smrti-j-k-rowling-2002-299399-0.jpg.webp",
+    accountNumber: null,
     userId: 8,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
   {
+    id: 31,
     title: "Učebnice matematiky SŠ",
     description: "Středoškolská matematika, lehce popsaná.",
     price: 150,
@@ -130,15 +228,16 @@ await db.insert(listing).values([
     category: "Knihy",
     status: "Dostupné",
     contact: "tereza.mala@blogic.cz",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxV1oXb1FLNVSikjrPkI8PbxmJwRww5711Mg&s",
+    accountNumber: "291411116/0300",
     userId: 9,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
-
-  // ======================
-  // 📦 OSTATNÍ
-  // David + Martin
-  // ======================
-
   {
+    id: 32,
     title: "Fitness sada (činky + gumy)",
     description: "Domácí fitness vybavení pro cvičení.",
     price: 900,
@@ -146,9 +245,16 @@ await db.insert(listing).values([
     category: "Ostatní",
     status: "Dostupné",
     contact: "david.prochazka@blogic.cz",
+    image: "https://media.cdn.kaufland.de/product-reviews/300x300/68359909119306e705b01b86fc7fbc0d.jpg",
+    accountNumber: "291411116/0300",
     userId: 10,
+    locationCity: "Holešov",
+    locationLat: "49.3302459",
+    locationLng: "17.5800398",
+    locationRadius: 1,
   },
   {
+    id: 33,
     title: "Horské kolo",
     description: "Starší, ale plně funkční horské kolo.",
     price: 2000,
@@ -156,8 +262,74 @@ await db.insert(listing).values([
     category: "Ostatní",
     status: "Dostupné",
     contact: "martin.kral@blogic.cz",
+    image: "https://www.bezvakolo.cz/data/imgauto/4/i0/O_400_81517_604100_O_00.jpg?b0c522956aa24c7f0c01aa47592feb60",
+    accountNumber: "291411116/0300",
     userId: 11,
+    locationCity: null,
+    locationLat: null,
+    locationLng: null,
+    locationRadius: null,
   },
+  {
+    id: 37,
+    title: "Iphone 15",
+    description: "Skoro nový",
+    price: 10000,
+    isFree: false,
+    category: "Elektronika",
+    status: "Dostupné",
+    contact: "patazavadil@seznam.cz",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8zQwQwQwQwQwQwQwQwQwQwQwQwQwQwQ&s",
+    accountNumber: "291411116/0300",
+    userId: 2,
+    locationCity: "Nad Stráněmi, Zlín, 760 05",
+    locationLat: "49.2310876",
+    locationLng: "17.6576245",
+    locationRadius: 3,
+  },
+]);
+
+// Recenze
+await db.insert(review).values([
+  {
+    id: 2,
+    userId: 4,
+    sellerId: 2,
+    listingId: 22,
+    rating: 3,
+    comment: "Koupě proběhla v pořádku, akorát telefon měl více oděrek než bylo řečeno",
+    listingTitle: "iPhone 12 128GB",
+  },
+  {
+    id: 3,
+    userId: 4,
+    sellerId: 2,
+    listingId: 22,
+    rating: 4,
+    comment: "Židle vypadá stejně jak na fotkách, akorát hodně vrže",
+    listingTitle: "Herní židle DXRacer",
+  },
+  {
+    id: 4,
+    userId: 2,
+    sellerId: 10,
+    listingId: 26,
+    rating: 2,
+    comment: "Bunda mi došla potrhaná",
+    listingTitle: "Zimní bunda Nike",
+  },
+]);
+
+// Oblíbené
+await db.insert(favorite).values([
+  { id: 10, userId: 4, listingId: 22 },
+  { id: 12, userId: 4, listingId: 29 },
+  { id: 13, userId: 4, listingId: 23 },
+  { id: 14, userId: 4, listingId: 32 },
+  { id: 15, userId: 2, listingId: 22 },
+  { id: 16, userId: 2, listingId: 25 },
+  { id: 17, userId: 2, listingId: 23 },
+  { id: 18, userId: 2, listingId: 29 },
 ]);
 
 console.log("Hotovo! Data jsou v databázi.");
